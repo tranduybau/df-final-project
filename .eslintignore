@@ -1,0 +1,2 @@
+# Ignore components from shadcn-ui
+components/ui/*
