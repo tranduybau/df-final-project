@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "Review code with AI",
+  name: "Cosmeller",
   description:
     "A code review service for git. Automatically review your code with AI.",
   mainNav: [
