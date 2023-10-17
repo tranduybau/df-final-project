@@ -1,6 +1,6 @@
-import { Moon, SunMedium } from "lucide-react"
+import {LogIn, Moon, SunMedium, LucideProps} from "lucide-react"
 
-type IconProps = React.HTMLAttributes<SVGElement>
+type IconProps = LucideProps
 
 export const Icons = {
   sun: SunMedium,
@@ -45,4 +45,8 @@ export const Icons = {
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   ),
+  signIn: (props: IconProps) => (
+    <LogIn {...props} />
+  )
+
 }

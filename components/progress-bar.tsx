@@ -4,6 +4,8 @@
 import { PropsWithChildren } from "react"
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar"
 
+const options = { showSpinner: false }
+
 const ProgressBarProvider = ({ children }: PropsWithChildren) => {
   return (
     <>
@@ -11,7 +13,7 @@ const ProgressBarProvider = ({ children }: PropsWithChildren) => {
       <ProgressBar
         height="4px"
         color="#131313"
-        options={{ showSpinner: false }}
+        options={options}
         shallowRouting
       />
     </>
