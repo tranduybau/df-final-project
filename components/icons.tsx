@@ -1,4 +1,12 @@
-import {LogIn, Moon, SunMedium, LucideProps} from "lucide-react"
+import {
+  GitBranch,
+  Globe2,
+  LogIn,
+  LucideProps,
+  Moon,
+  Search,
+  SunMedium,
+} from "lucide-react"
 
 type IconProps = LucideProps
 
@@ -45,8 +53,8 @@ export const Icons = {
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   ),
-  signIn: (props: IconProps) => (
-    <LogIn {...props} />
-  )
-
+  signIn: (props: IconProps) => <LogIn {...props} />,
+  global: (props: IconProps) => <Globe2 {...props} />,
+  branch: (props: IconProps) => <GitBranch {...props} />,
+  search: (props: IconProps) => <Search {...props} />,
 }

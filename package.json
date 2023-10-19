@@ -23,7 +23,7 @@
     "axios": "^1.5.1",
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",
-    "lucide-react": "0.105.0-alpha.4",
+    "lucide-react": "^0.279.0",
     "mitt": "^3.0.1",
     "next": "^13.4.8",
     "next-nprogress-bar": "^2.1.2",
