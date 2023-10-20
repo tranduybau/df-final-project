@@ -28,8 +28,8 @@ export default function Message({ me, message }: MessageProps) {
         </div>
         <div
           className={cn("relative rounded-xl px-4 py-2 text-sm shadow", {
-            "mr-3 bg-indigo-100": me,
-            "ml-3 bg-white": !me,
+            "mr-3 light:bg-indigo-100 dark:bg-indigo-900": me,
+            "ml-3 light:bg-white dark:bg-slate-800": !me,
           })}
         >
           <div>{message}</div>

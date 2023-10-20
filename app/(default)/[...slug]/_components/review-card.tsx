@@ -47,16 +47,16 @@ export default function ReviewCard({
           >
             <span>{grade}</span>
           </div>
-          <span className="cursor-pointer text-xs text-indigo-700 hover:underline">
+          <span className="cursor-pointer text-xs text-indigo-700 hover:underline dark:text-indigo-300">
             {fileName}
           </span>
         </div>
 
         <div className="flex items-center gap-x-4">
           {issueCount && (
-            <div className="flex items-center gap-1 rounded-full bg-red-200 px-2 py-1 dark:bg-slate-500">
+            <div className="light:bg-red-200 flex items-center gap-1 rounded-full px-2 py-1 dark:bg-red-100">
               <Icon name="circle-off" className="h-3 w-3 text-red-500" />
-              <span className="text-xs font-extrabold text-red-500">
+              <span className="text-xs font-semibold text-red-500">
                 {issueCount}
               </span>
             </div>

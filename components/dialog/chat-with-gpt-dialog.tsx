@@ -1,13 +1,11 @@
 "use client"
 
-import * as React from "react"
 import Image from "next/image"
 import chatGptImage from "@/assets/images/chatgpt.webp"
 
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -16,10 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-import Icon from "../common/icon"
-import InputWithIcon from "../common/input-with-icon"
 import TextAreaWithIcon from "../common/textarea-with-icon"
-import { Icons } from "../icons"
 import Message from "./_components/Message"
 
 export interface ChatWithGPTDialogProps {}
