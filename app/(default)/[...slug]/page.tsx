@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Icon from "@/components/common/icon"
-import SearchInput from "@/components/common/search-input"
+import InputWithIcon from "@/components/common/input-with-icon"
 import { Icons } from "@/components/icons"
+
+import ReviewCard from "./_components/review-card"
 
 export default function DynamicPage() {
   return (
@@ -24,7 +26,10 @@ export default function DynamicPage() {
             </div>
 
             <div>
-              <SearchInput placeholder="Search component..." />
+              <InputWithIcon
+                nameIcon="search"
+                placeholder="Search component..."
+              />
             </div>
           </div>
 
@@ -32,44 +37,12 @@ export default function DynamicPage() {
             <Card>
               <CardContent className="flex flex-col gap-y-2 p-4">
                 {Array.from({ length: 10 }).map((_, i) => (
-                  <div className="flex items-center gap-x-8 ">
-                    <button className="p-2 hover:cursor-pointer">
-                      <Icon
-                        name="chevron-right"
-                        className="h-4 w-4 text-gray-500"
-                      />
-                    </button>
-
-                    <div className="flex flex-1 items-center justify-between">
-                      <div className="flex items-center gap-x-4">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full border border-green-400">
-                          <span className="text-sm text-green-400">A</span>
-                        </div>
-                        <span className="cursor-pointer text-xs text-indigo-700 hover:underline">
-                          tools\releaseBuild\vstsbuild.sh
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-x-4">
-                        <div className="flex items-center gap-1 rounded-full bg-red-200 px-2 py-1 dark:bg-slate-500">
-                          <Icon
-                            name="circle-off"
-                            className="h-3 w-3 text-red-500"
-                          />
-                          <span className="text-xs font-extrabold text-red-500">
-                            8
-                          </span>
-                        </div>
-                        <Button variant="ghost">
-                          <Icon
-                            name="bot"
-                            className="mr-2 h-4 w-4 text-gray-500"
-                          />
-                          Chat with AI
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
+                  <ReviewCard
+                    key={i}
+                    fileName="tools\releaseBuild\vstsbuild.sh"
+                    issueCount={8}
+                    grade="A"
+                  />
                 ))}
               </CardContent>
             </Card>
