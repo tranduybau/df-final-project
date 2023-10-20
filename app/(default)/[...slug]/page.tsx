@@ -40,7 +40,8 @@ export default function DynamicPage() {
                   <ReviewCard
                     key={i}
                     fileName="tools\releaseBuild\vstsbuild.sh"
-                    issueCount={8}
+                    suggestionCount={8}
+                    warningCount={2}
                     grade="A"
                   />
                 ))}

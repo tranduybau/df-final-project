@@ -1,14 +1,23 @@
+"use client"
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import Icon from "@/components/common/icon"
 import ChatWithGPTDialog from "@/components/dialog/chat-with-gpt-dialog"
 
 export interface ReviewCardProps {
   fileName: string
   grade: string
-  issueCount?: number
+  warningCount?: number
+  suggestionCount?: number
 }
 
 const gradeColor = (gradeValue: string) => {
@@ -29,13 +38,27 @@ const gradeColor = (gradeValue: string) => {
 export default function ReviewCard({
   fileName,
   grade,
-  issueCount,
+  warningCount,
+  suggestionCount,
 }: ReviewCardProps) {
+  const [open, setOpen] = React.useState(false)
+
+  const handleToggle = () => {
+    setOpen(!open)
+  }
+
   return (
-    <div className="flex items-center gap-x-8 ">
-      <button className="p-2 hover:cursor-pointer">
+    <div className="flex items-center gap-x-4">
+      <Button
+        variant="ghost"
+        className={cn("rounded-full transition duration-300 ease-in-out", {
+          "rotate-90": open,
+        })}
+        size="icon"
+        onClick={handleToggle}
+      >
         <Icon name="chevron-right" className="h-4 w-4 text-gray-500" />
-      </button>
+      </Button>
 
       <div className="flex flex-1 items-center justify-between">
         <div className="flex items-center gap-x-4">
@@ -47,20 +70,49 @@ export default function ReviewCard({
           >
             <span>{grade}</span>
           </div>
+
           <span className="cursor-pointer text-xs text-indigo-700 hover:underline dark:text-indigo-300">
             {fileName}
           </span>
+
+          <div className="flex items-center gap-x-2">
+            {suggestionCount && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex h-4 w-4 cursor-pointer items-center justify-center gap-1 rounded-full bg-blue-400 dark:bg-blue-100">
+                      <span className="text-xs font-semibold text-white">
+                        {suggestionCount}
+                      </span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Number of suggestion in this file</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+
+            {warningCount && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex h-4 w-4 cursor-pointer items-center justify-center gap-1 rounded-full bg-yellow-400 p-2 dark:bg-yellow-100">
+                      <span className="text-xs font-semibold text-white">
+                        {warningCount}
+                      </span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Number of warning in this file</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-x-4">
-          {issueCount && (
-            <div className="light:bg-red-200 flex items-center gap-1 rounded-full px-2 py-1 dark:bg-red-100">
-              <Icon name="circle-off" className="h-3 w-3 text-red-500" />
-              <span className="text-xs font-semibold text-red-500">
-                {issueCount}
-              </span>
-            </div>
-          )}
           <ChatWithGPTDialog />
         </div>
       </div>

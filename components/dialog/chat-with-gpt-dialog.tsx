@@ -23,7 +23,7 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button variant="outline">
           <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-500">
             <Image src={chatGptImage} alt="chat-gpt-image" />
           </div>
