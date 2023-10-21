@@ -1,4 +1,4 @@
-import {LogIn, Moon, SunMedium, LucideProps} from "lucide-react"
+import {LogIn, Moon, SunMedium, LucideProps, ArrowLeft} from "lucide-react"
 
 type IconProps = LucideProps
 
@@ -47,6 +47,8 @@ export const Icons = {
   ),
   signIn: (props: IconProps) => (
     <LogIn {...props} />
-  )
-
+  ),
+  leftArrow: (props: IconProps) => (
+    <ArrowLeft {...props} />
+  ),
 }
