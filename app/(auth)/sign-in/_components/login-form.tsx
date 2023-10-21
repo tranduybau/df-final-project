@@ -26,6 +26,9 @@ import {
 import {Input} from "@/components/ui/input"
 import {useToast} from "@/components/ui/use-toast"
 import {Icons} from "@/components/icons"
+import ROUTES from "@/constants/ROUTES";
+import Link from "next/link";
+import {Separator} from "@/components/ui/separator";
 
 const LoginFormSchema = z.object({
   username: z.string().nonempty({
@@ -147,13 +150,23 @@ export function LoginForm({onSubmit}: LoginFormProps) {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex-col gap-6">
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
               )}
               Sign In
             </Button>
+
+            <Separator />
+
+            <Link href={ROUTES.HOME} className="w-full">
+              <Button type="button" className="w-full" variant="secondary">
+                <Icons.leftArrow className="mr-2" size={20} />
+
+                Go Back
+              </Button>
+            </Link>
           </CardFooter>
         </form>
       </Card>
