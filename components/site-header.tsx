@@ -1,8 +1,7 @@
 import Link from "next/link"
 
 import { siteConfig } from "@/config/site"
-import { buttonVariants } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
+import {Button} from "@/components/ui/button"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import ROUTES from "@/constants/ROUTES";
@@ -14,18 +13,13 @@ export function SiteHeader() {
         <MainNav items={siteConfig.mainNav} />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
-            <Link href={ROUTES.SIGN_IN}>
-              <div
-                className={buttonVariants({
-                  size: "icon",
-                  variant: "ghost",
-                })}
-              >
-                <Icons.signIn size={20} />
-                <span className="sr-only">GitHub</span>
-              </div>
-            </Link>
             <ThemeToggle />
+
+            <Link href={ROUTES.SIGN_IN}>
+              <Button variant="ghost">
+                Sign In
+              </Button>
+            </Link>
           </nav>
         </div>
       </div>

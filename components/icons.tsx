@@ -1,4 +1,5 @@
 import {
+  ArrowLeft,
   GitBranch,
   Globe2,
   LogIn,
@@ -57,4 +58,5 @@ export const Icons = {
   global: (props: IconProps) => <Globe2 {...props} />,
   branch: (props: IconProps) => <GitBranch {...props} />,
   search: (props: IconProps) => <Search {...props} />,
+  leftArrow: (props: IconProps) => <ArrowLeft {...props} />,
 }
