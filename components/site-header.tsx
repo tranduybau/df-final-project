@@ -1,8 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import ROUTES from "@/constants/ROUTES"
 import { useAuthContext } from "@/context/auth"
 
@@ -22,13 +20,6 @@ import { ThemeToggle } from "@/components/theme-toggle"
 
 export function SiteHeader() {
   const { logout, user, isLogin } = useAuthContext()
-  const { push } = useRouter()
-
-  useEffect(() => {
-    if (!isLogin) {
-      push(ROUTES.SIGN_IN)
-    }
-  }, [isLogin, push])
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -44,7 +35,7 @@ export function SiteHeader() {
               </Link>
             )}
 
-            {!isLogin && (
+            {isLogin && user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button

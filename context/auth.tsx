@@ -29,14 +29,18 @@ const AuthContextProvider = ({ children }: PropsWithChildren) => {
   const [isLogin, setIsLogin] = useState(() => {
     return isSSR() ? false : Boolean(window.localStorage.getItem(tokenKey))
   })
-  const [user, setUser] = useState()
+  const [user, setUser] = useState(() => {
+    return isSSR() ? "" : window.localStorage.getItem(userKey) || ""
+  })
 
   const login = useCallback(async (username: string, password: string) => {
     try {
       const res = await authApi.login({ username, password })
       if (res.data) {
         setIsLogin(true)
+        setUser(res.data.username)
         window.localStorage.setItem(tokenKey, res.data.accessToken)
+        window.localStorage.setItem(userKey, res.data.username)
       }
     } catch (error) {
       throw new Error("Incorrect username or password")
