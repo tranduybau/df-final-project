@@ -1,17 +1,18 @@
 "use client"
 
 import * as React from "react"
+import dynamic from "next/dynamic"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import BadgeWithTooltip from "@/components/common/badge-with-tooltip"
 import Icon from "@/components/common/icon"
+import { testMarkdownText } from "@/components/common/message"
 import ChatWithGPTDialog from "@/components/dialog/chat-with-gpt-dialog"
+
+const Message = dynamic(() => import("@/components/common/message"), {
+  loading: () => <p>Loading...</p>,
+})
 
 export interface ReviewCardProps {
   fileName: string
@@ -23,13 +24,13 @@ export interface ReviewCardProps {
 const gradeColor = (gradeValue: string) => {
   switch (gradeValue) {
     case "A":
-      return "bg-green-100 text-green-400 border-green-400"
+      return "bg-green-100 dark:bg-green-500 text-green-400 dark:text-white border-green-400"
     case "B":
-      return "bg-yellow-100 text-yellow-400 border-yellow-400"
+      return "bg-yellow-100 dark:bg-yellow-500 text-yellow-400 dark:text-white border-yellow-400"
     case "C":
-      return "bg-orange-100 text-orange-400 border-orange-400"
+      return "bg-orange-100 dark:bg-orange-500 text-orange-400 dark:text-white border-orange-400"
     case "D":
-      return "bg-red-100 text-red-400 border-red-400"
+      return "bg-red-100 dark:bg-red-500 text-red-400 dark:text-white border-red-400"
     default:
       return "bg-gray-100 text-gray-400 border-gray-400"
   }
@@ -48,74 +49,69 @@ export default function ReviewCard({
   }
 
   return (
-    <div className="flex items-center gap-x-4">
-      <Button
-        variant="ghost"
-        className={cn("rounded-full transition duration-300 ease-in-out", {
-          "rotate-90": open,
-        })}
-        size="icon"
+    <div className="flex flex-col">
+      <div
+        className="flex cursor-pointer items-center gap-x-4 hover:bg-slate-100 dark:hover:bg-indigo-900"
         onClick={handleToggle}
       >
-        <Icon name="chevron-right" className="h-4 w-4 text-gray-500" />
-      </Button>
+        <Button
+          variant="ghost"
+          className={cn("rounded-full transition duration-300 ease-in-out", {
+            "rotate-90": open,
+          })}
+          size="icon"
+          onClick={handleToggle}
+        >
+          <Icon name="chevron-right" className="h-4 w-4 text-gray-500" />
+        </Button>
 
-      <div className="flex flex-1 items-center justify-between">
-        <div className="flex items-center gap-x-4">
-          <div
-            className={cn(
-              "flex h-6 w-6 items-center justify-center rounded-full border text-sm font-extrabold",
-              gradeColor(grade)
-            )}
-          >
-            <span>{grade}</span>
+        <div className="flex flex-1 items-center justify-between">
+          <div className="flex items-center gap-x-4">
+            <div
+              className={cn(
+                "flex h-6 w-6 items-center justify-center rounded-full border text-sm font-extrabold",
+                gradeColor(grade)
+              )}
+            >
+              <span>{grade}</span>
+            </div>
+
+            <span className="cursor-pointer text-xs text-indigo-700 dark:text-white">
+              {fileName}
+            </span>
+
+            <div className="flex items-center gap-x-2">
+              {suggestionCount && (
+                <BadgeWithTooltip
+                  value={suggestionCount}
+                  tooltip="Number of suggestion in this file"
+                  className="bg-amber-400 text-white dark:bg-amber-300 dark:text-amber-900"
+                />
+              )}
+
+              {warningCount && (
+                <BadgeWithTooltip
+                  value={warningCount}
+                  tooltip="Number of warning in this file"
+                  className="bg-blue-700 text-white dark:bg-blue-400 dark:text-blue-900"
+                />
+              )}
+            </div>
           </div>
 
-          <span className="cursor-pointer text-xs text-indigo-700 hover:underline dark:text-indigo-300">
-            {fileName}
-          </span>
-
-          <div className="flex items-center gap-x-2">
-            {suggestionCount && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex h-4 w-4 cursor-pointer items-center justify-center gap-1 rounded-full bg-blue-400 dark:bg-blue-100">
-                      <span className="text-xs font-semibold text-white">
-                        {suggestionCount}
-                      </span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Number of suggestion in this file</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-
-            {warningCount && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex h-4 w-4 cursor-pointer items-center justify-center gap-1 rounded-full bg-yellow-400 p-2 dark:bg-yellow-100">
-                      <span className="text-xs font-semibold text-white">
-                        {warningCount}
-                      </span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Number of warning in this file</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
+          <div onClick={(e) => e.stopPropagation()}>
+            <ChatWithGPTDialog />
           </div>
-        </div>
-
-        <div className="flex items-center gap-x-4">
-          <ChatWithGPTDialog />
         </div>
       </div>
+
+      {open && (
+        <div className="mt-2 h-96 overflow-hidden rounded-md border border-slate-100 p-4 dark:border-slate-900">
+          <div className="h-full overflow-y-auto">
+            <Message markdownText={testMarkdownText} hiddenShadow />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
