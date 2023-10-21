@@ -22,17 +22,25 @@ export interface ReviewCardProps {
 }
 
 const gradeColor = (gradeValue: string) => {
+  const colorMap = {
+    A: "bg-green-100 dark:bg-green-500 text-green-400 dark:text-white border-green-400",
+    B: "bg-yellow-100 dark:bg-yellow-500 text-yellow-400 dark:text-white border-yellow-400",
+    C: "bg-orange-100 dark:bg-orange-500 text-orange-400 dark:text-white border-orange-400",
+    D: "bg-red-100 dark:bg-red-500 text-red-400 dark:text-white border-red-400",
+    default: "bg-gray-100 text-gray-400 border-gray-400",
+  }
+
   switch (gradeValue) {
     case "A":
-      return "bg-green-100 dark:bg-green-500 text-green-400 dark:text-white border-green-400"
+      return colorMap.A
     case "B":
-      return "bg-yellow-100 dark:bg-yellow-500 text-yellow-400 dark:text-white border-yellow-400"
+      return colorMap.B
     case "C":
-      return "bg-orange-100 dark:bg-orange-500 text-orange-400 dark:text-white border-orange-400"
+      return colorMap.C
     case "D":
-      return "bg-red-100 dark:bg-red-500 text-red-400 dark:text-white border-red-400"
+      return colorMap.D
     default:
-      return "bg-gray-100 text-gray-400 border-gray-400"
+      return colorMap.default
   }
 }
 

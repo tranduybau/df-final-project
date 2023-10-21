@@ -1,9 +1,9 @@
 import * as React from "react"
 
-import InputWithIcon from "@/components/common/input-with-icon"
+import AppInput from "@/components/common/app-input"
 import { Icons } from "@/components/icons"
 
-export interface IReviewHeaderProps {
+export interface ReviewHeaderProps {
   name: string
   branch?: string
 }
@@ -11,7 +11,7 @@ export interface IReviewHeaderProps {
 export default function ReviewHeader({
   name,
   branch = "master",
-}: IReviewHeaderProps) {
+}: ReviewHeaderProps) {
   return (
     <div className="flex items-center justify-between border-b border-slate-200 pb-4 dark:border-slate-50">
       <div className="flex items-center gap-4">
@@ -28,7 +28,7 @@ export default function ReviewHeader({
       </div>
 
       <div>
-        <InputWithIcon nameIcon="search" placeholder="Search component..." />
+        <AppInput nameIcon="search" placeholder="Search component..." />
       </div>
     </div>
   )

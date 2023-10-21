@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils"
 import { Textarea } from "../ui/textarea"
 import Icon from "./icon"
 
-export interface TextAreaProps
+export interface AppTextAreaProps
   extends React.InputHTMLAttributes<HTMLTextAreaElement> {
   nameIcon: keyof typeof dynamicIconImports
   fullWidth?: boolean
 }
 
-const TextAreaWithIcon = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
+const AppTextArea = React.forwardRef<HTMLTextAreaElement, AppTextAreaProps>(
   ({ className, type, nameIcon, fullWidth = false, ...props }, ref) => {
     return (
       <div
@@ -29,6 +29,6 @@ const TextAreaWithIcon = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
     )
   }
 )
-TextAreaWithIcon.displayName = "TextAreaWithIcon"
+AppTextArea.displayName = "AppTextArea"
 
-export default TextAreaWithIcon
+export default AppTextArea

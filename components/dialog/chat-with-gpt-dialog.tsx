@@ -16,8 +16,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
+import AppTextArea from "../common/app-textarea"
 import Icon from "../common/icon"
-import TextAreaWithIcon from "../common/textarea-with-icon"
 import MessageList from "./_components/message-list"
 
 export interface ChatWithGPTDialogProps {}
@@ -67,7 +67,7 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
 
         <DialogFooter className="sm:justify-start">
           <div className="relative w-full">
-            <TextAreaWithIcon
+            <AppTextArea
               nameIcon="message-square"
               placeholder="Send a message..."
               fullWidth

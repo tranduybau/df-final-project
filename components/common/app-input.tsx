@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils"
 import { Input } from "../ui/input"
 import Icon from "./icon"
 
-export interface InputProps
+export interface AppInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   nameIcon: keyof typeof dynamicIconImports
   fullWidth?: boolean
 }
 
-const InputWithIcon = React.forwardRef<HTMLInputElement, InputProps>(
+const AppInput = React.forwardRef<HTMLInputElement, AppInputProps>(
   ({ className, type, nameIcon, fullWidth = false, ...props }, ref) => {
     return (
       <div
@@ -34,6 +34,6 @@ const InputWithIcon = React.forwardRef<HTMLInputElement, InputProps>(
     )
   }
 )
-InputWithIcon.displayName = "InputWithIcon"
+AppInput.displayName = "AppInput"
 
-export default InputWithIcon
+export default AppInput
