@@ -53,6 +53,7 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
 
         <div className="h-[70vh] overflow-hidden py-4">
           <div className="h-full overflow-y-auto">
+            {/* <MessageSkeletonList /> */}
             <MessageList messageList={messageList} />
             <div
               ref={(node) => {

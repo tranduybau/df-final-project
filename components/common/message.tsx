@@ -179,7 +179,7 @@ export default function Message({
         </div>
         <div
           className={cn(
-            "relative w-full overflow-x-auto rounded-xl px-4 py-2 text-sm",
+            "relative w-full overflow-x-auto rounded-md px-4 py-2 text-sm",
             {
               "mr-3 bg-indigo-100 dark:bg-indigo-900": me,
               "ml-3 bg-white dark:bg-slate-800": !me,

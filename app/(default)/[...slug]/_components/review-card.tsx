@@ -8,11 +8,17 @@ import { Button } from "@/components/ui/button"
 import BadgeWithTooltip from "@/components/common/badge-with-tooltip"
 import Icon from "@/components/common/icon"
 import { testMarkdownText } from "@/components/common/message"
-import ChatWithGPTDialog from "@/components/dialog/chat-with-gpt-dialog"
 
 const Message = dynamic(() => import("@/components/common/message"), {
   loading: () => <p>Loading...</p>,
 })
+
+const ChatWithGPTDialog = dynamic(
+  () => import("@/components/dialog/chat-with-gpt-dialog"),
+  {
+    loading: () => <p>Loading...</p>,
+  }
+)
 
 export interface ReviewCardProps {
   fileName: string
