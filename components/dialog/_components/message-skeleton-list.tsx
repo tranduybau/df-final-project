@@ -6,9 +6,9 @@ const MessageSkeletonList = () => {
   return (
     <div className="w-full">
       <MessageSkeleton />
-      <MessageSkeleton isRight />
+      <MessageSkeleton isHumanMess />
       <MessageSkeleton />
-      <MessageSkeleton isRight />
+      <MessageSkeleton isHumanMess />
     </div>
   )
 }

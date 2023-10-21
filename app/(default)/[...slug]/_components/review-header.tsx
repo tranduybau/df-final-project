@@ -28,7 +28,7 @@ export default function ReviewHeader({
       </div>
 
       <div>
-        <AppInput nameIcon="search" placeholder="Search component..." />
+        <AppInput leftIcon="search" placeholder="Search component..." />
       </div>
     </div>
   )

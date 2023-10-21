@@ -24,10 +24,8 @@ export default function BadgeWithTooltip({
           <div
             className={cn(
               "flex h-4 w-4 cursor-pointer items-center justify-center gap-1 rounded-full",
-              {
-                "bg-slate-900 dark:bg-slate-300 text-white": !className,
-                [className]: Boolean(className),
-              }
+              className,
+              !className && "bg-slate-900 text-white dark:bg-slate-300"
             )}
           >
             <span className="text-xs font-semibold">{value}</span>

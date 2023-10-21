@@ -69,10 +69,9 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
         <DialogFooter className="sm:justify-start">
           <div className="relative w-full">
             <AppTextArea
-              nameIcon="message-square"
+              leftIcon="message-square"
               placeholder="Send a message..."
-              fullWidth
-              className="resize-none pr-12"
+              className="w-full resize-none pr-12"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
@@ -84,17 +83,17 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
               <div className="relative">
                 <Icon
                   name="send-horizontal"
-                  className={cn("h-6 w-6", {
-                    "text-gray-500": !message,
-                    "text-blue-500": message,
-                  })}
+                  className={cn(
+                    "h-6 w-6",
+                    message ? "text-blue-500" : "text-gray-500"
+                  )}
                 />
                 <Icon
                   name="sparkle"
-                  className={cn("absolute -right-1 -top-1 h-3 w-3", {
-                    "text-gray-500": !message,
-                    "text-blue-500": message,
-                  })}
+                  className={cn(
+                    "absolute -right-1 -top-1 h-3 w-3",
+                    message ? "text-blue-500" : "text-gray-500"
+                  )}
                 />
               </div>
             </Button>

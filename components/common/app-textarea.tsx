@@ -8,22 +8,19 @@ import Icon from "./icon"
 
 export interface AppTextAreaProps
   extends React.InputHTMLAttributes<HTMLTextAreaElement> {
-  nameIcon: keyof typeof dynamicIconImports
-  fullWidth?: boolean
+  leftIcon: keyof typeof dynamicIconImports
 }
 
 const AppTextArea = React.forwardRef<HTMLTextAreaElement, AppTextAreaProps>(
-  ({ className, type, nameIcon, fullWidth = false, ...props }, ref) => {
+  ({ className, type, leftIcon, ...props }, ref) => {
     return (
-      <div
-        className={cn("relative", {
-          "w-full": fullWidth,
-        })}
-      >
-        <Icon
-          name={nameIcon}
-          className="absolute inset-y-0 left-3 mt-2 h-6 w-6 text-gray-500"
-        />
+      <div className="relative">
+        {leftIcon && (
+          <Icon
+            name={leftIcon}
+            className="absolute inset-y-0 left-3 mt-2 h-6 w-6 text-gray-500"
+          />
+        )}
         <Textarea className={cn("pl-11", className)} ref={ref} {...props} />
       </div>
     )

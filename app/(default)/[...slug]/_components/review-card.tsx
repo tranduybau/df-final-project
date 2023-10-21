@@ -70,9 +70,10 @@ export default function ReviewCard({
       >
         <Button
           variant="ghost"
-          className={cn("rounded-full transition duration-300 ease-in-out", {
-            "rotate-90": open,
-          })}
+          className={cn(
+            "rounded-full transition duration-300 ease-in-out",
+            open && "rotate-90"
+          )}
           size="icon"
           onClick={handleToggle}
         >
@@ -95,7 +96,7 @@ export default function ReviewCard({
             </span>
 
             <div className="flex items-center gap-x-2">
-              {suggestionCount && (
+              {!!suggestionCount && (
                 <BadgeWithTooltip
                   value={suggestionCount}
                   tooltip="Number of suggestion in this file"
@@ -103,7 +104,7 @@ export default function ReviewCard({
                 />
               )}
 
-              {warningCount && (
+              {!!warningCount && (
                 <BadgeWithTooltip
                   value={warningCount}
                   tooltip="Number of warning in this file"

@@ -163,16 +163,13 @@ export default function Message({
 }: MessageProps) {
   return (
     <div
-      className={cn("col-end-13 rounded-lg p-3", {
-        "col-start-4": me,
-        "col-start-1": !me,
-      })}
+      className={cn(
+        "col-end-13 rounded-lg p-3",
+        me ? "col-start-4" : "col-start-1"
+      )}
     >
       <div
-        className={cn("flex items-start", {
-          "flex-row-reverse": me,
-          "flex-row": !me,
-        })}
+        className={cn("flex items-start", me ? "flex-row-reverse" : "flex-row")}
       >
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-400">
           {me ? me : <Image src={chatGptImage} alt="chat-gpt-image" />}
@@ -180,11 +177,10 @@ export default function Message({
         <div
           className={cn(
             "relative w-full overflow-x-auto rounded-md px-4 py-2 text-sm",
-            {
-              "mr-3 bg-indigo-100 dark:bg-indigo-900": me,
-              "ml-3 bg-white dark:bg-slate-800": !me,
-              shadow: !hiddenShadow,
-            }
+            me
+              ? "mr-3 bg-indigo-100 dark:bg-indigo-900"
+              : "ml-3 bg-white dark:bg-slate-800",
+            !hiddenShadow && "shadow"
           )}
         >
           <Markdown

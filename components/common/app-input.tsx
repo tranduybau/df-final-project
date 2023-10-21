@@ -8,22 +8,19 @@ import Icon from "./icon"
 
 export interface AppInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  nameIcon: keyof typeof dynamicIconImports
-  fullWidth?: boolean
+  leftIcon: keyof typeof dynamicIconImports
 }
 
 const AppInput = React.forwardRef<HTMLInputElement, AppInputProps>(
-  ({ className, type, nameIcon, fullWidth = false, ...props }, ref) => {
+  ({ className, type, leftIcon, ...props }, ref) => {
     return (
-      <div
-        className={cn("relative", {
-          "w-full": fullWidth,
-        })}
-      >
-        <Icon
-          name={nameIcon}
-          className="absolute inset-y-0 left-3 my-auto h-6 w-6 text-gray-500"
-        />
+      <div className="relative">
+        {leftIcon && (
+          <Icon
+            name={leftIcon}
+            className="absolute inset-y-0 left-3 my-auto h-6 w-6 text-gray-500"
+          />
+        )}
         <Input
           type={type}
           className={cn("pl-11", className)}
