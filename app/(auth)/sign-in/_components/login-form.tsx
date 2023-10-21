@@ -1,12 +1,13 @@
-"use client"
+'use client';
 
-import React from "react"
-import {zodResolver} from "@hookform/resolvers/zod"
-import {useForm} from "react-hook-form"
-import * as z from "zod"
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import * as z from 'zod';
 
-import getErrorMessage from "@/lib/get-error-message"
-import {Button} from "@/components/ui/button"
+import { Icons } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -22,57 +23,57 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import {Input} from "@/components/ui/input"
-import {useToast} from "@/components/ui/use-toast"
-import {Icons} from "@/components/icons"
-import ROUTES from "@/constants/ROUTES";
-import Link from "next/link";
-import {Separator} from "@/components/ui/separator";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/components/ui/use-toast';
+
+import ROUTES from '@/constants/ROUTES';
+import getErrorMessage from '@/lib/get-error-message';
 
 const LoginFormSchema = z.object({
   username: z.string().nonempty({
-    message: "Please enter your username.",
+    message: 'Please enter your username.',
   }),
 
   password: z.string().nonempty({
-    message: "Please enter your password.",
+    message: 'Please enter your password.',
   }),
-})
+});
 
-export type LoginFormType = z.infer<typeof LoginFormSchema>
+export type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormType) => void
 }
 
-export function LoginForm({onSubmit}: LoginFormProps) {
-  const {toast} = useToast()
+export function LoginForm({ onSubmit }: LoginFormProps) {
+  const { toast } = useToast();
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(LoginFormSchema),
-  })
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  });
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   function handleSocialLogin() {
     toast({
-      variant: "default",
-      title: "This feature is not available yet. Please try again later.",
-    })
+      variant: 'default',
+      title: 'This feature is not available yet. Please try again later.',
+    });
   }
 
   async function handleFormSubmit(data: LoginFormType) {
     try {
-      setIsLoading(true)
-      await onSubmit?.(data)
+      setIsLoading(true);
+      await onSubmit?.(data);
     } catch (error) {
-      const errorMsg = getErrorMessage(error)
+      const errorMsg = getErrorMessage(error);
       toast({
-        variant: "destructive",
+        variant: 'destructive',
         title: errorMsg,
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -93,7 +94,7 @@ export function LoginForm({onSubmit}: LoginFormProps) {
                 variant="outline"
                 onClick={handleSocialLogin}
               >
-                <Icons.gitHub className="mr-2 h-4 w-4"/>
+                <Icons.gitHub className="mr-2 h-4 w-4" />
                 Github
               </Button>
               <Button
@@ -101,31 +102,31 @@ export function LoginForm({onSubmit}: LoginFormProps) {
                 variant="outline"
                 onClick={handleSocialLogin}
               >
-                <Icons.google className="mr-2 h-4 w-4"/>
+                <Icons.google className="mr-2 h-4 w-4" />
                 Google
               </Button>
             </div>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t"/>
+                <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
               </div>
             </div>
             <div className="grid gap-2">
               <FormField
                 control={form.control}
                 name="username"
-                render={({field}) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
                       <Input placeholder="Username" {...field} />
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -134,7 +135,7 @@ export function LoginForm({onSubmit}: LoginFormProps) {
               <FormField
                 control={form.control}
                 name="password"
-                render={({field}) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
@@ -144,7 +145,7 @@ export function LoginForm({onSubmit}: LoginFormProps) {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -153,7 +154,7 @@ export function LoginForm({onSubmit}: LoginFormProps) {
           <CardFooter className="flex-col gap-6">
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               )}
               Sign In
             </Button>
@@ -171,5 +172,5 @@ export function LoginForm({onSubmit}: LoginFormProps) {
         </form>
       </Card>
     </Form>
-  )
+  );
 }
