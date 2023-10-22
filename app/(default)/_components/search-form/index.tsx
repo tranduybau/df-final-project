@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 
+import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import {
   Form, FormControl, FormField, FormItem, FormMessage,
@@ -15,6 +16,7 @@ import { Input } from '@/components/ui/input';
 
 import StartDeco from '@/assets/images/star.svg';
 import ROUTES from '@/constants/ROUTES';
+import { useAuthContext } from '@/context/auth';
 import { useGetGithubRepositoryOverview } from '@/zustand/useGetGithubRepository';
 
 const formSchema = z.object({
@@ -49,6 +51,7 @@ const formSchema = z.object({
 
 function SearchForm() {
   const router = useRouter();
+  const { isLogin } = useAuthContext();
 
   const {
     isLoadingGithubRepositoryOverview,
@@ -63,6 +66,11 @@ function SearchForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (!isLogin) {
+      router.push(ROUTES.SIGN_IN);
+      return;
+    }
+
     const formattedLink = data.repository.replace('https://github.com/', '').replace('github.com/', '');
     const repository = await actionGetGithubRepositoryOverview(formattedLink);
 
@@ -96,8 +104,8 @@ function SearchForm() {
               </FormItem>
             )}
           />
-          <Button className="h-full shrink-0 rounded-full bg-slate-900 px-8 py-4 text-white hover:bg-slate-800" disabled={isLoadingGithubRepositoryOverview}>
-            Code Review Now
+          <Button className="h-full max-h-[52px] min-w-[190px] shrink-0 rounded-full bg-slate-900 px-8 py-4 text-white hover:bg-slate-800" disabled={isLoadingGithubRepositoryOverview}>
+            {isLoadingGithubRepositoryOverview ? <div className=""><Icons.spinner className="h-6 w-6 animate-spin text-gray-500" /></div> : 'Code Review Now'}
           </Button>
         </form>
       </Form>

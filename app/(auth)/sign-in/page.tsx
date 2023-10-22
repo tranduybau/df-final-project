@@ -1,13 +1,22 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
 
+import ROUTES from '@/constants/ROUTES';
 import { useAuthContext } from '@/context/auth';
 
 import { LoginForm, LoginFormType } from './_components/login-form';
 
 export default function LoginPage() {
-  const { login } = useAuthContext();
+  const { push } = useRouter();
+  const { login, isLogin } = useAuthContext();
+
+  React.useEffect(() => {
+    if (isLogin) {
+      push(ROUTES.HOME);
+    }
+  }, [isLogin, push]);
 
   const handleLoginFormSubmit = async (data: LoginFormType) => {
     const { username, password } = data;

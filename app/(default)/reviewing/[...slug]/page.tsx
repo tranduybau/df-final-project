@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 
 import ROUTES from '@/constants/ROUTES';
-import { useGetGithubRepositoryOverview } from '@/zustand/useGetGithubRepository';
+import { GitHubFileType, useGetGithubRepositoryOverview, useGetRepositoryFiles } from '@/zustand/useGetGithubRepository';
 
 import ReviewCard from './_components/review-card';
 import ReviewHeader from './_components/review-header';
@@ -28,9 +28,23 @@ export default function DynamicPage(props: Props) {
 
   const { toast } = useToast();
 
-  const { actionGetGithubRepositoryOverview } = useGetGithubRepositoryOverview();
+  const { overview, actionGetGithubRepositoryOverview } = useGetGithubRepositoryOverview();
+  const { files, actionGetGithubRepositoryFiles } = useGetRepositoryFiles();
 
   const [mounted, setMounted] = React.useState(false);
+  const [page, setPage] = React.useState(1);
+  const [searchFilesValue, setSearchFilesValue] = React.useState('');
+
+  const filteredFiles = React.useMemo(
+    () => {
+      if (searchFilesValue) {
+        // eslint-disable-next-line max-len
+        return files.filter((file: GitHubFileType) => file.path.toLowerCase().includes(searchFilesValue.toLowerCase())).slice((page - 1) * 10, page * 10);
+      }
+      return files.slice((page - 1) * 10, page * 10);
+    },
+    [files, page, searchFilesValue],
+  );
 
   const onCheckGitHubRepositoryOverview = async () => {
     const repositoryOverview = await actionGetGithubRepositoryOverview(
@@ -45,6 +59,12 @@ export default function DynamicPage(props: Props) {
     router.push(ROUTES.HOME);
   };
 
+  useMemo(() => {
+    if (!overview?.default_branch) return;
+
+    actionGetGithubRepositoryFiles(params.slug.join('/'), overview.default_branch);
+  }, [overview?.default_branch]);
+
   React.useEffect(() => {
     /**
      * Em verify hết các case khi vào page này mà link không phải repos
@@ -52,6 +72,18 @@ export default function DynamicPage(props: Props) {
      * 2. Link ít nhất 2 item (user/repo)
      * 3. Link repos không valid
      */
+    (async () => {
+      if (!params.slug.length || params.slug.length < 2) {
+        router.push(ROUTES.HOME);
+        return;
+      }
+
+      const repository = await actionGetGithubRepositoryOverview(params.slug.join('/'));
+
+      if (!repository?.default_branch) {
+        router.push(ROUTES.HOME);
+      }
+    })();
 
     let timer: NodeJS.Timeout;
 
@@ -59,6 +91,7 @@ export default function DynamicPage(props: Props) {
       toast({
         role: 'error', // toast của thằng này có vẻ gà, warning/error không thật sự meanful UI nhỉ, background của nó vẫn trắng toast =))
         title: 'Invalid link',
+        variant: 'destructive', // thêm dòng này là nó toast đỏ chót cho mình nè anh =)) nhma vẫn gà, chỉ có màu trắng với đỏ :v
         description: 'Please try again later',
       });
 
@@ -74,6 +107,20 @@ export default function DynamicPage(props: Props) {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleNextPage = () => {
+    if (page === Math.ceil(files.length / 10)) return;
+    setPage(page + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (page === 1) return;
+    setPage(page - 1);
+  };
+
+  const handleSearchFiles = (value: string) => {
+    setSearchFilesValue(value);
+  };
+
   // Case loading component
   if (!mounted) {
     return (
@@ -86,6 +133,8 @@ export default function DynamicPage(props: Props) {
     );
   }
 
+  if (!overview) return null;
+
   /**
    * Check document useSWR ở đây (không cần SSR vì page này mình review, CSR thôi
    * https://chat.openai.com/share/ac34d19c-6a47-428c-946d-0bd9b14a09d2
@@ -96,60 +145,38 @@ export default function DynamicPage(props: Props) {
     <section className="container mt-10">
       <Card>
         <CardContent className="px-4 py-6">
-          <ReviewHeader name="Freecodecamp" branch="master" />
+          <ReviewHeader repositoryOverView={overview} onSearchFiles={handleSearchFiles} />
 
           <div className="mt-4">
             <Card>
               <CardContent className="flex flex-col gap-y-2 p-4">
-                <ReviewCard
-                  fileName="tools\releaseBuild\vstsbuild.sh"
-                  suggestionCount={8}
-                  warningCount={2}
-                  grade="A"
-                />
-                <ReviewCard
-                  fileName="tools\releaseBuild\vstsbuild.sh"
-                  suggestionCount={8}
-                  warningCount={2}
-                  grade="B"
-                />
-                <ReviewCard
-                  fileName="tools\releaseBuild\vstsbuild.sh"
-                  suggestionCount={8}
-                  warningCount={2}
-                  grade="C"
-                />
-                <ReviewCard
-                  fileName="tools\releaseBuild\vstsbuild.sh"
-                  suggestionCount={8}
-                  warningCount={2}
-                  grade="D"
-                />
-                {/* {Array.from({ length: 10 }).map((_, i) => (
+                {filteredFiles.map((file: GitHubFileType) => (
                   <ReviewCard
-                    key={i}
-                    fileName="tools\releaseBuild\vstsbuild.sh"
-                    suggestionCount={8}
-                    warningCount={2}
-                    grade=""
+                    grade="A"
+                    key={file.sha}
+                    fileName={file.path}
                   />
-                ))} */}
+                ))}
               </CardContent>
             </Card>
 
             <div className="mt-4 flex items-center justify-between">
-              <Button variant="ghost">
-                <Icon name="move-left" className="mr-2 h-4 w-4 text-gray-500" />
-                Previous page
-              </Button>
+              {page > 1 ? (
+                <Button variant="ghost" onClick={handlePrevPage}>
+                  <Icon name="move-left" className="mr-2 h-4 w-4 text-gray-500" />
+                  Previous page
+                </Button>
+              ) : <div />}
 
-              <Button variant="ghost">
-                Next page
-                <Icon
-                  name="move-right"
-                  className="ml-2 h-4 w-4 text-gray-500"
-                />
-              </Button>
+              {page < Math.ceil(files.length / 10) && (
+                <Button variant="ghost" onClick={handleNextPage}>
+                  Next page
+                  <Icon
+                    name="move-right"
+                    className="ml-2 h-4 w-4 text-gray-500"
+                  />
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>

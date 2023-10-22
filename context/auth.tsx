@@ -3,6 +3,7 @@
 import {
   PropsWithChildren, useCallback, useEffect, useState,
 } from 'react';
+import * as React from 'react';
 import { createContext, isSSR } from '@dwarvesf/react-utils';
 
 import { emitter } from '@/lib/emitter';
@@ -28,15 +29,18 @@ const cleanAuth = () => {
 };
 
 function AuthContextProvider({ children }: PropsWithChildren) {
+  // eslint-disable-next-line max-len
   const [isLogin, setIsLogin] = useState(() => (isSSR() ? false : Boolean(window.localStorage.getItem(tokenKey))));
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(() => (isSSR() ? '' : window.localStorage.getItem(userKey) || ''));
 
   const login = useCallback(async (username: string, password: string) => {
     try {
       const res = await authApi.login({ username, password });
       if (res.data) {
         setIsLogin(true);
+        setUser(res.data.username);
         window.localStorage.setItem(tokenKey, res.data.accessToken);
+        window.localStorage.setItem(userKey, res.data.username);
       }
     } catch (error) {
       throw new Error('Incorrect username or password');

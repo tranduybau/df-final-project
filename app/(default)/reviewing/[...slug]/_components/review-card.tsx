@@ -24,8 +24,8 @@ const ChatWithGPTDialog = dynamic(
 export interface ReviewCardProps {
   fileName: string;
   grade: string;
-  warningCount: number;
-  suggestionCount: number;
+  warningCount?: number;
+  suggestionCount?: number;
 }
 
 const gradeColor = (gradeValue: string) => {
@@ -54,8 +54,8 @@ const gradeColor = (gradeValue: string) => {
 export default function ReviewCard({
   fileName,
   grade,
-  warningCount = 0,
-  suggestionCount = 0,
+  warningCount,
+  suggestionCount,
 }: ReviewCardProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -132,3 +132,8 @@ export default function ReviewCard({
     </div>
   );
 }
+
+ReviewCard.defaultProps = {
+  warningCount: 0,
+  suggestionCount: 0,
+};
