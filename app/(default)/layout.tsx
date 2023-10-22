@@ -1,14 +1,15 @@
-import {PropsWithChildren} from "react"
-import {SiteHeader} from "@/components/site-header"
-import {SiteFooter} from "@/components/site-footer";
+import React, { PropsWithChildren } from 'react';
 
-export default function RootLayout({children}: PropsWithChildren) {
+import { SiteFooter } from '@/components/site-footer';
+import { SiteHeader } from '@/components/site-header';
+
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <div className="flex flex-1 flex-col">
-      <SiteHeader/>
+      <SiteHeader />
       <div className="flex-1">{children}</div>
 
-      <SiteFooter/>
+      <SiteFooter />
     </div>
-  )
+  );
 }
