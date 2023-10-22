@@ -1,11 +1,14 @@
-import Link from "next/link"
+import React from 'react';
+import Link from 'next/link';
 
-import { siteConfig } from "@/config/site"
-import {Button} from "@/components/ui/button"
-import { MainNav } from "@/components/main-nav"
-import { ThemeToggle } from "@/components/theme-toggle"
-import ROUTES from "@/constants/ROUTES";
+import { MainNav } from '@/components/main-nav';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Button } from '@/components/ui/button';
 
+import { siteConfig } from '@/config/site';
+import ROUTES from '@/constants/ROUTES';
+
+// eslint-disable-next-line import/prefer-default-export
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -24,5 +27,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }
