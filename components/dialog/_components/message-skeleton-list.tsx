@@ -1,8 +1,8 @@
-import React from "react"
+import React from 'react';
 
-import MessageSkeleton from "@/components/common/message-skeleton"
+import MessageSkeleton from '@/components/common/message-skeleton';
 
-const MessageSkeletonList = () => {
+function MessageSkeletonList() {
   return (
     <div className="w-full">
       <MessageSkeleton />
@@ -10,7 +10,7 @@ const MessageSkeletonList = () => {
       <MessageSkeleton />
       <MessageSkeleton isHumanMess />
     </div>
-  )
+  );
 }
 
-export default MessageSkeletonList
+export default MessageSkeletonList;

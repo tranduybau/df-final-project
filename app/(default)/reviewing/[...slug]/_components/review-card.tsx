@@ -1,78 +1,80 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import dynamic from "next/dynamic"
+import * as React from 'react';
+import dynamic from 'next/dynamic';
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import BadgeWithTooltip from "@/components/common/badge-with-tooltip"
-import Icon from "@/components/common/icon"
-import { testMarkdownText } from "@/components/common/message"
+import BadgeWithTooltip from '@/components/common/badge-with-tooltip';
+import Icon from '@/components/common/icon';
+import { testMarkdownText } from '@/components/common/message';
+import { Button } from '@/components/ui/button';
 
-const Message = dynamic(() => import("@/components/common/message"), {
+import { cn } from '@/lib/utils';
+
+const Message = dynamic(() => import('@/components/common/message'), {
   loading: () => <p>Loading...</p>,
-})
+});
 
 const ChatWithGPTDialog = dynamic(
-  () => import("@/components/dialog/chat-with-gpt-dialog"),
+  () => import('@/components/dialog/chat-with-gpt-dialog'),
   {
     loading: () => <p>Loading...</p>,
-  }
-)
+  },
+);
 
 export interface ReviewCardProps {
-  fileName: string
-  grade: string
-  warningCount?: number
-  suggestionCount?: number
+  fileName: string;
+  grade: string;
+  warningCount: number;
+  suggestionCount: number;
 }
 
 const gradeColor = (gradeValue: string) => {
   const colorMap = {
-    A: "bg-green-100 dark:bg-green-500 text-green-400 dark:text-white border-green-400",
-    B: "bg-yellow-100 dark:bg-yellow-500 text-yellow-400 dark:text-white border-yellow-400",
-    C: "bg-orange-100 dark:bg-orange-500 text-orange-400 dark:text-white border-orange-400",
-    D: "bg-red-100 dark:bg-red-500 text-red-400 dark:text-white border-red-400",
-    default: "bg-gray-100 text-gray-400 border-gray-400",
-  }
+    A: 'bg-green-100 dark:bg-green-500 text-green-400 dark:text-white border-green-400',
+    B: 'bg-yellow-100 dark:bg-yellow-500 text-yellow-400 dark:text-white border-yellow-400',
+    C: 'bg-orange-100 dark:bg-orange-500 text-orange-400 dark:text-white border-orange-400',
+    D: 'bg-red-100 dark:bg-red-500 text-red-400 dark:text-white border-red-400',
+    default: 'bg-gray-100 text-gray-400 border-gray-400',
+  };
 
   switch (gradeValue) {
-    case "A":
-      return colorMap.A
-    case "B":
-      return colorMap.B
-    case "C":
-      return colorMap.C
-    case "D":
-      return colorMap.D
+    case 'A':
+      return colorMap.A;
+    case 'B':
+      return colorMap.B;
+    case 'C':
+      return colorMap.C;
+    case 'D':
+      return colorMap.D;
     default:
-      return colorMap.default
+      return colorMap.default;
   }
-}
+};
 
 export default function ReviewCard({
   fileName,
   grade,
-  warningCount,
-  suggestionCount,
+  warningCount = 0,
+  suggestionCount = 0,
 }: ReviewCardProps) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
   const handleToggle = () => {
-    setOpen(!open)
-  }
+    setOpen(!open);
+  };
 
   return (
     <div className="flex flex-col">
-      <div
-        className="flex cursor-pointer items-center gap-x-4 hover:bg-slate-100 dark:hover:bg-indigo-900"
+      <button
+        type="button"
+        className="flex cursor-pointer items-center gap-x-4 p-1 hover:bg-slate-100 dark:hover:bg-indigo-900"
         onClick={handleToggle}
       >
         <Button
           variant="ghost"
           className={cn(
-            "rounded-full transition duration-300 ease-in-out",
-            open && "rotate-90"
+            'rounded-full transition duration-300 ease-in-out',
+            open && 'rotate-90',
           )}
           size="icon"
           onClick={handleToggle}
@@ -84,8 +86,8 @@ export default function ReviewCard({
           <div className="flex items-center gap-x-4">
             <div
               className={cn(
-                "flex h-6 w-6 items-center justify-center rounded-full border text-sm font-extrabold",
-                gradeColor(grade)
+                'flex h-6 w-6 items-center justify-center rounded-full border text-sm font-extrabold',
+                gradeColor(grade),
               )}
             >
               <span>{grade}</span>
@@ -114,11 +116,11 @@ export default function ReviewCard({
             </div>
           </div>
 
-          <div onClick={(e) => e.stopPropagation()}>
+          <button type="button" onClick={(e) => e.stopPropagation()}>
             <ChatWithGPTDialog />
-          </div>
+          </button>
         </div>
-      </div>
+      </button>
 
       {open && (
         <div className="mt-2 h-96 overflow-hidden rounded-md border border-slate-100 p-4 dark:border-slate-900">
@@ -128,5 +130,5 @@ export default function ReviewCard({
         </div>
       )}
     </div>
-  )
+  );
 }

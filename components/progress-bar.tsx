@@ -1,12 +1,11 @@
-// Create a ProgressBarProvider component to wrap your application with all the components requiring 'use client', such as next-nprogress-bar or your different contexts...
-"use client"
+'use client';
 
-import { PropsWithChildren } from "react"
-import { AppProgressBar as ProgressBar } from "next-nprogress-bar"
+import React, { PropsWithChildren } from 'react';
+import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 
-const options = { showSpinner: false }
+const options = { showSpinner: false };
 
-const ProgressBarProvider = ({ children }: PropsWithChildren) => {
+function ProgressBarProvider({ children }: PropsWithChildren) {
   return (
     <>
       {children}
@@ -17,7 +16,7 @@ const ProgressBarProvider = ({ children }: PropsWithChildren) => {
         shallowRouting
       />
     </>
-  )
+  );
 }
 
-export default ProgressBarProvider
+export default ProgressBarProvider;

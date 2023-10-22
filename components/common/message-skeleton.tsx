@@ -1,4 +1,6 @@
-import { Skeleton } from "../ui/skeleton"
+import * as React from 'react';
+
+import { Skeleton } from '../ui/skeleton';
 
 interface MessageSkeletonProps {
   isHumanMess?: boolean
@@ -11,7 +13,7 @@ export default function MessageSkeleton({ isHumanMess }: MessageSkeletonProps) {
         <Skeleton className="h-20 w-1/2 rounded-md" />
         <Skeleton className="h-12 w-12 rounded-full" />
       </div>
-    )
+    );
   }
 
   return (
@@ -20,5 +22,9 @@ export default function MessageSkeleton({ isHumanMess }: MessageSkeletonProps) {
 
       <Skeleton className="h-36 w-full rounded-md" />
     </div>
-  )
+  );
 }
+
+MessageSkeleton.defaultProps = {
+  isHumanMess: false,
+};

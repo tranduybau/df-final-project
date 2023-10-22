@@ -1,16 +1,17 @@
-import { memo } from "react"
-import dynamic from "next/dynamic"
-import { LucideProps } from "lucide-react"
-import dynamicIconImports from "lucide-react/dynamicIconImports"
+import { memo } from 'react';
+import * as React from 'react';
+import { LucideProps } from 'lucide-react';
+import dynamicIconImports from 'lucide-react/dynamicIconImports';
+import dynamic from 'next/dynamic';
 
 interface IconProps extends LucideProps {
   name: keyof typeof dynamicIconImports
 }
 
-const Icon = ({ name, ...props }: IconProps) => {
-  const LucideIcon = dynamic(dynamicIconImports[name])
+function Icon({ name, ...props }: IconProps) {
+  const LucideIcon = dynamic(dynamicIconImports[name]);
 
-  return <LucideIcon {...props} />
+  return <LucideIcon {...props} />;
 }
 
-export default memo(Icon)
+export default memo(Icon);

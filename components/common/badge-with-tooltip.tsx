@@ -1,21 +1,24 @@
-import { cn } from "@/lib/utils"
+import * as React from 'react';
+
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from '@/components/ui/tooltip';
+
+import { cn } from '@/lib/utils';
 
 export interface BadgeWithTooltipProps {
   value: number | string
   tooltip: string
-  className?: string
+  className: string
 }
 
-export default function BadgeWithTooltip({
+function BadgeWithTooltip({
   value,
   tooltip,
-  className = "",
+  className = '',
 }: BadgeWithTooltipProps) {
   return (
     <TooltipProvider>
@@ -23,9 +26,9 @@ export default function BadgeWithTooltip({
         <TooltipTrigger asChild>
           <div
             className={cn(
-              "flex h-4 w-4 cursor-pointer items-center justify-center gap-1 rounded-full",
+              'flex h-4 w-4 cursor-pointer items-center justify-center gap-1 rounded-full',
               className,
-              !className && "bg-slate-900 text-white dark:bg-slate-300"
+              !className && 'bg-slate-900 text-white dark:bg-slate-300',
             )}
           >
             <span className="text-xs font-semibold">{value}</span>
@@ -36,5 +39,7 @@ export default function BadgeWithTooltip({
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  )
+  );
 }
+
+export default BadgeWithTooltip;

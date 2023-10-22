@@ -1,11 +1,9 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import Image from "next/image"
-import chatGptImage from "@/assets/images/chatgpt.webp"
+import * as React from 'react';
+import Image from 'next/image';
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,23 +12,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog';
 
-import AppTextArea from "../common/app-textarea"
-import Icon from "../common/icon"
-import MessageList from "./_components/message-list"
+import chatGptImage from '@/assets/images/chatgpt.webp';
+import { cn } from '@/lib/utils';
 
-export interface ChatWithGPTDialogProps {}
+import AppTextArea from '../common/app-textarea';
+import Icon from '../common/icon';
 
-export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
-  const [message, setMessage] = React.useState("")
+import MessageList from './_components/message-list';
 
-  const messageList = React.useMemo(() => ["1", "2", "3"], [])
+export default function ChatWithGPTDialog() {
+  const [message, setMessage] = React.useState('');
+
+  const messageList = React.useMemo(() => ['1', '2', '3'], []);
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" onClick={(e) => e.stopPropagation()}>
+        <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
           <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100">
             <Image src={chatGptImage} alt="chat-gpt-image" />
           </div>
@@ -40,7 +40,7 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
       <DialogContent
         className="max-w-full sm:max-w-7xl"
         onInteractOutside={(e: any) => {
-          e.stopPropagation()
+          e.stopPropagation();
         }}
       >
         <DialogHeader>
@@ -59,7 +59,7 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
               ref={(node) => {
                 // When the node is available, scroll to the bottom.
                 if (node) {
-                  node.scrollIntoView()
+                  node.scrollIntoView();
                 }
               }}
             />
@@ -84,15 +84,15 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
                 <Icon
                   name="send-horizontal"
                   className={cn(
-                    "h-6 w-6",
-                    message ? "text-blue-500" : "text-gray-500"
+                    'h-6 w-6',
+                    message ? 'text-blue-500' : 'text-gray-500',
                   )}
                 />
                 <Icon
                   name="sparkle"
                   className={cn(
-                    "absolute -right-1 -top-1 h-3 w-3",
-                    message ? "text-blue-500" : "text-gray-500"
+                    'absolute -right-1 -top-1 h-3 w-3',
+                    message ? 'text-blue-500' : 'text-gray-500',
                   )}
                 />
               </div>
@@ -101,5 +101,5 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

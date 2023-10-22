@@ -1,6 +1,7 @@
-import { PropsWithChildren } from "react"
-import { AuthContextProvider } from "@/context/auth"
+import React, { PropsWithChildren } from 'react';
+
+import { AuthContextProvider } from '@/context/auth';
 
 export default function AuthLayout({ children }: PropsWithChildren) {
-  return <AuthContextProvider>{children}</AuthContextProvider>
+  return <AuthContextProvider>{children}</AuthContextProvider>;
 }

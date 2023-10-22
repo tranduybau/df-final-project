@@ -1,17 +1,14 @@
-import * as React from "react"
+import * as React from 'react';
 
-import AppInput from "@/components/common/app-input"
-import { Icons } from "@/components/icons"
+import AppInput from '@/components/common/app-input';
+import { Icons } from '@/components/icons';
 
 export interface ReviewHeaderProps {
-  name: string
-  branch?: string
+  name: string;
+  branch: string;
 }
 
-export default function ReviewHeader({
-  name,
-  branch = "master",
-}: ReviewHeaderProps) {
+export default function ReviewHeader({ name, branch }: ReviewHeaderProps) {
   return (
     <div className="flex items-center justify-between border-b border-slate-200 pb-4 dark:border-slate-50">
       <div className="flex items-center gap-4">
@@ -31,5 +28,5 @@ export default function ReviewHeader({
         <AppInput leftIcon="search" placeholder="Search component..." />
       </div>
     </div>
-  )
+  );
 }

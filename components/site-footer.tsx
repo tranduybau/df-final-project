@@ -1,8 +1,10 @@
-import Link from "next/link"
+import React from 'react';
+import Link from 'next/link';
 
-import {siteConfig} from "@/config/site"
-import ROUTES from "@/constants/ROUTES";
+import { siteConfig } from '@/config/site';
+import ROUTES from '@/constants/ROUTES';
 
+// eslint-disable-next-line import/prefer-default-export
 export function SiteFooter() {
   return (
     <footer className="container mx-auto w-full py-10 md:py-24">
@@ -40,9 +42,12 @@ export function SiteFooter() {
         </div>
 
         <div className="flex items-end font-semibold">
-          {siteConfig.name} © {new Date().getFullYear()}
+          {siteConfig.name}
+          {' '}
+          ©
+          {new Date().getFullYear()}
         </div>
       </div>
     </footer>
-  )
+  );
 }
