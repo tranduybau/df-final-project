@@ -16,16 +16,21 @@ import {
 
 import chatGptImage from '@/assets/images/chatgpt.webp';
 import { cn } from '@/lib/utils';
+import { ReviewMessage } from '@/types/chatGPT';
 
 import AppTextArea from '../common/app-textarea';
 import Icon from '../common/icon';
 
 import MessageList from './_components/message-list';
+import MessageSkeletonList from './_components/message-skeleton-list';
 
-export default function ChatWithGPTDialog() {
+export interface ChatWithGPTDialogProps {
+  reviewMessages: ReviewMessage[];
+  isLoading: boolean;
+}
+
+export default function ChatWithGPTDialog({ reviewMessages, isLoading }: ChatWithGPTDialogProps) {
   const [message, setMessage] = React.useState('');
-
-  const messageList = React.useMemo(() => ['1', '2', '3'], []);
 
   return (
     <Dialog>
@@ -53,8 +58,8 @@ export default function ChatWithGPTDialog() {
 
         <div className="h-[70vh] overflow-hidden py-4">
           <div className="h-full overflow-y-auto">
-            {/* <MessageSkeletonList /> */}
-            <MessageList messageList={messageList} />
+            {isLoading ? <MessageSkeletonList />
+              : <MessageList messageList={reviewMessages} />}
             <div
               ref={(node) => {
                 // When the node is available, scroll to the bottom.

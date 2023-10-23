@@ -1,19 +1,24 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
+import debounce from 'lodash.debounce';
 import { RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import Icon from '@/components/common/icon';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
 
 import ROUTES from '@/constants/ROUTES';
+import { ReviewMessage, ReviewMessageMap, ReviewMessageRole } from '@/types/chatGPT';
+import { getContentFileRepository, getReviewFromChatGPT } from '@/utils/chatGPT';
+import getReviewPrompt from '@/utils/prompt';
 import { GitHubFileType, useGetGithubRepositoryOverview, useGetRepositoryFiles } from '@/zustand/useGetGithubRepository';
 
 import ReviewCard from './_components/review-card';
 import ReviewHeader from './_components/review-header';
+
+const PER_PAGE = 10;
 
 interface Props {
   params: {
@@ -26,14 +31,13 @@ export default function DynamicPage(props: Props) {
 
   const router = useRouter();
 
-  const { toast } = useToast();
-
   const { overview, actionGetGithubRepositoryOverview } = useGetGithubRepositoryOverview();
   const { files, actionGetGithubRepositoryFiles } = useGetRepositoryFiles();
 
-  const [mounted, setMounted] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false); // show loading ui on init page
   const [page, setPage] = React.useState(1);
   const [searchFilesValue, setSearchFilesValue] = React.useState('');
+  const [reviewMessages, setReviewMessages] = React.useState<ReviewMessageMap>({});
 
   const filteredFiles = React.useMemo(
     () => {
@@ -46,69 +50,8 @@ export default function DynamicPage(props: Props) {
     [files, page, searchFilesValue],
   );
 
-  const onCheckGitHubRepositoryOverview = async () => {
-    const repositoryOverview = await actionGetGithubRepositoryOverview(
-      params.slug.join('/'),
-    );
-
-    if (repositoryOverview?.default_branch) {
-      setMounted(true);
-      return;
-    }
-
-    router.push(ROUTES.HOME);
-  };
-
-  useMemo(() => {
-    if (!overview?.default_branch) return;
-
-    actionGetGithubRepositoryFiles(params.slug.join('/'), overview.default_branch);
-  }, [overview?.default_branch]);
-
-  React.useEffect(() => {
-    /**
-     * Em verify hết các case khi vào page này mà link không phải repos
-     * 1. Không có link repos
-     * 2. Link ít nhất 2 item (user/repo)
-     * 3. Link repos không valid
-     */
-    (async () => {
-      if (!params.slug.length || params.slug.length < 2) {
-        router.push(ROUTES.HOME);
-        return;
-      }
-
-      const repository = await actionGetGithubRepositoryOverview(params.slug.join('/'));
-
-      if (!repository?.default_branch) {
-        router.push(ROUTES.HOME);
-      }
-    })();
-
-    let timer: NodeJS.Timeout;
-
-    if (params.slug.length < 2) {
-      toast({
-        role: 'error', // toast của thằng này có vẻ gà, warning/error không thật sự meanful UI nhỉ, background của nó vẫn trắng toast =))
-        title: 'Invalid link',
-        variant: 'destructive', // thêm dòng này là nó toast đỏ chót cho mình nè anh =)) nhma vẫn gà, chỉ có màu trắng với đỏ :v
-        description: 'Please try again later',
-      });
-
-      timer = setTimeout(() => {
-        router.push(ROUTES.HOME);
-      }, 2000);
-    }
-
-    onCheckGitHubRepositoryOverview();
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const handleNextPage = () => {
-    if (page === Math.ceil(files.length / 10)) return;
+    if (page === Math.ceil(files.length / PER_PAGE)) return;
     setPage(page + 1);
   };
 
@@ -117,11 +60,74 @@ export default function DynamicPage(props: Props) {
     setPage(page - 1);
   };
 
-  const handleSearchFiles = (value: string) => {
+  const handleSearchFiles = debounce((value: string) => {
     setSearchFilesValue(value);
+    setPage(1);
+  }, 500);
+
+  const handleReviewMessage = async (fileName: string) => {
+    // If review message is already exist, don't need to fetch again
+    if (reviewMessages[fileName]) return;
+
+    // eslint-disable-next-line max-len
+    const contentFile = await getContentFileRepository({ fileName, pathName: overview!.full_name, branch: overview!.default_branch });
+    if (!contentFile) return;
+
+    const prompt = getReviewPrompt(contentFile);
+    const message = await getReviewFromChatGPT(prompt);
+    if (!message) return;
+
+    setReviewMessages((prev) => {
+      const newReviewMessage: ReviewMessage = {
+        id: fileName,
+        role: ReviewMessageRole.BOT,
+        message,
+      };
+
+      if (prev[fileName]) return prev;
+
+      return {
+        ...prev,
+        [fileName]: [
+          ...prev[fileName] ?? [],
+          newReviewMessage,
+        ],
+      };
+    });
   };
 
-  // Case loading component
+  const onCheckRepositoryPublic = async () => {
+    const repository = await actionGetGithubRepositoryOverview(params.slug.join('/'));
+
+    if (!repository?.default_branch) {
+      router.push(ROUTES.HOME);
+      return;
+    }
+
+    const listFiles = await actionGetGithubRepositoryFiles(params.slug.join('/'), repository.default_branch);
+
+    if (!listFiles.length) {
+      router.push(ROUTES.HOME);
+      return;
+    }
+
+    setMounted(true);
+  };
+
+  /**
+    * @description Hook to check repository
+    * step 1: Check if repository's link is valid
+    * step 2: Check if repository is existing/public
+  */
+  React.useEffect(() => {
+    if (!params.slug.length || params.slug.length < 2) {
+      router.push(ROUTES.HOME);
+      return;
+    }
+
+    onCheckRepositoryPublic();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!mounted) {
     return (
       <section className="container flex flex-col items-center gap-10 py-20">
@@ -135,12 +141,6 @@ export default function DynamicPage(props: Props) {
 
   if (!overview) return null;
 
-  /**
-   * Check document useSWR ở đây (không cần SSR vì page này mình review, CSR thôi
-   * https://chat.openai.com/share/ac34d19c-6a47-428c-946d-0bd9b14a09d2
-   */
-
-  // case đã load github, mọi thứ oke
   return (
     <section className="container mt-10">
       <Card>
@@ -155,6 +155,8 @@ export default function DynamicPage(props: Props) {
                     grade="A"
                     key={file.sha}
                     fileName={file.path}
+                    onReviewMessageChange={handleReviewMessage}
+                    reviewMessages={reviewMessages?.[file.path] ?? []}
                   />
                 ))}
               </CardContent>

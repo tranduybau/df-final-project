@@ -1,19 +1,21 @@
 import * as React from 'react';
 
-import Message, { testMarkdownText } from '@/components/common/message';
+import Message from '@/components/common/message';
+
+import { ReviewMessage, ReviewMessageRole } from '@/types/chatGPT';
 
 export interface MessageListProps {
-  messageList: string[]
+  messageList: ReviewMessage[]
 }
 
 function MessageList({ messageList }: MessageListProps) {
   return (
     <div className="flex flex-col gap-y-2">
-      {messageList.map((message, index) => (
+      {messageList.map((message) => (
         <Message
-          key={message}
-          me={index % 2 === 0 ? 'K' : undefined}
-          markdownText={index % 2 === 0 ? 'Thanks!!!' : testMarkdownText}
+          key={message.id}
+          isUser={message.role === ReviewMessageRole.USER}
+          markdownText={message.message}
         />
       ))}
     </div>

@@ -13,7 +13,7 @@ import remarkToc from 'remark-toc';
 import chatGptImage from '@/assets/images/chatgpt.webp';
 import { cn } from '@/lib/utils';
 
-function CodeCopyBtn({ children }: any) {
+function CodeCopyBtn({ children }: React.PropsWithChildren) {
   const [copyOk, setCopyOk] = React.useState(false);
 
   const handleClick = () => {
@@ -67,7 +67,7 @@ function CodeCopyBtn({ children }: any) {
   );
 }
 
-function PreMarkdown({ children }: any) {
+function PreMarkdown({ children }: React.PropsWithChildren) {
   return (
     <pre className="relative">
       <CodeCopyBtn>{children}</CodeCopyBtn>
@@ -98,170 +98,33 @@ function CodeMarkdown({
 }
 
 export interface MessageProps {
-  me?: string
+  isUser?: boolean
   markdownText: string
   hiddenShadow?: boolean
 }
 
-export const testMarkdownText = `
-# Tiêu đề
-
-Đây là một đoạn mã nguồn:
-- HTML code:
-
-\`\`\`html
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Bookstore</title>
-
-    <!-- Embed font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Font awesome -->
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
-      integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay"
-      crossorigin="anonymous"
-    />
-
-    <!-- Internal CSS -->
-    <link href="./assets/styles/reset.css" rel="stylesheet" type="text/css" />
-    <link href="./assets/styles/style.css" rel="stylesheet" type="text/css" />
-
-    <!-- Placing the script tag here with "defer" attribute helps improve performance -->
-    <!-- Reference links: https://www.freecodecamp.org/news/javascript-performance-async-defer/ -->
-    <script src="./js/script.js" type="module" defer></script>
-  </head>
-
-  <body>
-    <header>
-      <div class="container">
-        <div class="header__wrapper">
-          <div class="logo">
-            <a href="/">Bookstore</a>
-          </div>
-
-          <div class="user">
-            <div class="user__image">
-              <img src="./assets/images/user.png" alt="logo" />
-            </div>
-            <div class="user__name">Khang Dev</div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <main>
-      <div class="container">
-        <div class="search__wrapper">
-          <div class="search__bar">
-            <input
-              type="text"
-              class="search__input input-field"
-              id="search-input"
-              placeholder="Search books"
-            />
-            <button class="btn" id="add-book-btn">Add book</button>
-          </div>
-        </div>
-
-        <table class="table" id="book-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Author</th>
-              <th>Topic</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Book list will be displayed here -->
-          </tbody>
-        </table>
-      </div>
-    </main>
-  </body>
-</html>
-\`\`\`
-
-- Javascript code
-
-\`\`\`javascript
-function createStyleObject(classNames, style) {
-  return classNames.reduce((styleObject, className) => {
-    return {...styleObject, ...style[className]};
-  }, {});
-}
-
-function createClassNameString(classNames) {
-  return classNames.join(' ');
-}
-
-// this comment is here to demonstrate an extremely long line length, well beyond what you should probably allow in your own code, though sometimes you'll be highlighting code you can't refactor, which is unfortunate but should be handled gracefully
-
-function createChildren(style, useInlineStyles) {
-  let childrenCount = 0;
-  return children => {
-    childrenCount += 1;
-    return children.map((child, i) => createElement({
-      node: child,
-      style,
-      useInlineStyles,
-      key: 'code-segment-\${childrenCount}-\${i}'
-    }));
-  }
-}
-
-function createElement({ node, style, useInlineStyles, key }) {
-  const { properties, type, tagName, value } = node;
-  if (type === "text") {
-    return value;
-  } else if (tagName) {
-    const TagName = tagName;
-    const childrenCreator = createChildren(style, useInlineStyles);
-    const props = (
-      useInlineStyles
-      ? { style: createStyleObject(properties.className, style) }
-      : { className: createClassNameString(properties.className) }
-    );
-    const children = childrenCreator(node.children);
-    return <TagName key={key} {...props}>{children}</TagName>;
-  }
-}
-\`\`\`
-  `;
-
 export default function Message({
-  me,
+  isUser,
   markdownText,
   hiddenShadow = false,
-}: MessageProps) {
+}:MessageProps) {
   return (
     <div
       className={cn(
         'rounded-lg p-3',
-        me ? 'ml-auto w-fit max-w-[70%]' : 'w-fit max-w-full',
+        isUser ? 'ml-auto min-w-fit max-w-[70%]' : 'min-w-fit max-w-full',
       )}
     >
       <div
-        className={cn('flex items-start', me ? 'flex-row-reverse' : 'flex-row')}
+        className={cn('flex items-start', isUser ? 'flex-row-reverse' : 'flex-row')}
       >
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-400">
-          {me || <Image src={chatGptImage} alt="chat-gpt-image" />}
+          {isUser || <Image src={chatGptImage} alt="chat-gpt-image" />}
         </div>
         <div
           className={cn(
-            'relative w-full overflow-x-auto rounded-md px-4 py-2 text-sm',
-            me
+            'relative w-full overflow-x-auto rounded-md px-4 py-2 text-sm leading-8',
+            isUser
               ? 'mr-3 bg-indigo-100 dark:bg-indigo-900'
               : 'ml-3 bg-white dark:bg-slate-800',
             !hiddenShadow && 'shadow',
@@ -285,6 +148,6 @@ export default function Message({
 }
 
 Message.defaultProps = {
-  me: false,
+  isUser: false,
   hiddenShadow: false,
 };

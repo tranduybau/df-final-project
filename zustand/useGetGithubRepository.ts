@@ -2,6 +2,8 @@ import { create } from 'zustand';
 
 import { toast } from '@/components/ui/use-toast';
 
+import { removeDotGitURL } from '@/utils/common';
+
 /**
  * @Type GetGithubRepositoryOverview
  * Use for api check GitHub repository is existing or not
@@ -121,8 +123,7 @@ interface GetGithubRepositoryOverview {
 export const useGetGithubRepositoryOverview = create<GetGithubRepositoryOverview>((set) => ({
   isLoadingGithubRepositoryOverview: false,
   actionGetGithubRepositoryOverview: async (path) => {
-    // Remove .git from path
-    const newPath = path.replace(/\.git$/, '');
+    const newPath = removeDotGitURL(path);
 
     const ENDPOINT = `repos/${newPath}`;
     let response;
@@ -182,8 +183,7 @@ interface GetGithubRepositoryFiles {
 export const useGetRepositoryFiles = create<GetGithubRepositoryFiles>((set) => ({
   isLoading: false,
   actionGetGithubRepositoryFiles: async (path, defaultBranch) => {
-    // Remove .git from path
-    const newPath = path.replace(/\.git$/, '');
+    const newPath = removeDotGitURL(path);
 
     const ENDPOINT = `repos/${newPath}/git/trees/${defaultBranch}?recursive=1`;
     let response: GetGitHubRepositoryFilesPromise;

@@ -53,9 +53,7 @@ export default function IndexPage() {
           className="my-6 whitespace-pre text-center text-3xl font-extrabold !leading-loose tracking-tighter md:my-10 md:text-4xl"
         >
           Why Collaborate
-          {' '}
           {'\n'}
-          {' '}
           with us?
         </h2>
 

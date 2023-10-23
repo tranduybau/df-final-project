@@ -3,15 +3,15 @@
 import * as React from 'react';
 import dynamic from 'next/dynamic';
 
-import BadgeWithTooltip from '@/components/common/badge-with-tooltip';
 import Icon from '@/components/common/icon';
-import { testMarkdownText } from '@/components/common/message';
+import MessageSkeleton from '@/components/common/message-skeleton';
 import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
+import { ReviewMessage } from '@/types/chatGPT';
 
 const Message = dynamic(() => import('@/components/common/message'), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <MessageSkeleton />,
 });
 
 const ChatWithGPTDialog = dynamic(
@@ -20,13 +20,6 @@ const ChatWithGPTDialog = dynamic(
     loading: () => <p>Loading...</p>,
   },
 );
-
-export interface ReviewCardProps {
-  fileName: string;
-  grade: string;
-  warningCount?: number;
-  suggestionCount?: number;
-}
 
 const gradeColor = (gradeValue: string) => {
   const colorMap = {
@@ -51,16 +44,31 @@ const gradeColor = (gradeValue: string) => {
   }
 };
 
+export interface ReviewCardProps {
+  fileName: string;
+  grade: string;
+  reviewMessages: ReviewMessage[];
+  onReviewMessageChange: (fileName: string) => void;
+}
+
 export default function ReviewCard({
   fileName,
   grade,
-  warningCount,
-  suggestionCount,
+  reviewMessages,
+  onReviewMessageChange,
 }: ReviewCardProps) {
   const [open, setOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  const handleToggle = () => {
+  const handleFetchReviewMessages = async () => {
+    setIsLoading(true);
+    await onReviewMessageChange(fileName);
+    setIsLoading(false);
+  };
+
+  const handleToggle = async () => {
     setOpen(!open);
+    handleFetchReviewMessages();
   };
 
   return (
@@ -96,28 +104,16 @@ export default function ReviewCard({
             <span className="cursor-pointer text-xs text-indigo-700 dark:text-white">
               {fileName}
             </span>
-
-            <div className="flex items-center gap-x-2">
-              {!!suggestionCount && (
-                <BadgeWithTooltip
-                  value={suggestionCount}
-                  tooltip="Number of suggestion in this file"
-                  className="bg-amber-400 text-white dark:bg-amber-300 dark:text-amber-900"
-                />
-              )}
-
-              {!!warningCount && (
-                <BadgeWithTooltip
-                  value={warningCount}
-                  tooltip="Number of warning in this file"
-                  className="bg-blue-700 text-white dark:bg-blue-400 dark:text-blue-900"
-                />
-              )}
-            </div>
           </div>
 
-          <button type="button" onClick={(e) => e.stopPropagation()}>
-            <ChatWithGPTDialog />
+          <button
+            type="button"
+            onClick={async (e) => {
+              handleFetchReviewMessages();
+              e.stopPropagation();
+            }}
+          >
+            <ChatWithGPTDialog reviewMessages={reviewMessages} isLoading={isLoading} />
           </button>
         </div>
       </button>
@@ -125,15 +121,11 @@ export default function ReviewCard({
       {open && (
         <div className="mt-2 h-96 overflow-hidden rounded-md border border-slate-100 p-4 dark:border-slate-900">
           <div className="h-full overflow-y-auto">
-            <Message markdownText={testMarkdownText} hiddenShadow />
+            {/* eslint-disable-next-line max-len */}
+            {isLoading ? <MessageSkeleton /> : <Message markdownText={reviewMessages[0].message} hiddenShadow />}
           </div>
         </div>
       )}
     </div>
   );
 }
-
-ReviewCard.defaultProps = {
-  warningCount: 0,
-  suggestionCount: 0,
-};
