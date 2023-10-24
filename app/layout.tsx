@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 
 import { siteConfig } from '@/config/site';
+import { AuthContextProvider } from '@/context/auth';
 import { fontSans } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 
@@ -40,10 +41,12 @@ export default function RootLayout({ children }: PropsWithChildren) {
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ProgressBarProvider>
-            {children}
-            <Toaster />
-          </ProgressBarProvider>
+          <AuthContextProvider>
+            <ProgressBarProvider>
+              {children}
+              <Toaster />
+            </ProgressBarProvider>
+          </AuthContextProvider>
           <TailwindIndicator />
         </ThemeProvider>
       </body>
