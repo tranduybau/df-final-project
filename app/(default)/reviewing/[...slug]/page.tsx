@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 import ROUTES from '@/constants/ROUTES';
-import { ReviewMessage, ReviewMessageMap, ReviewMessageRole } from '@/types/chatGPT';
+import { ReviewMessageMap, ReviewMessageRole } from '@/types/chatGPT';
 import { getContentFileRepository, getReviewFromChatGPT } from '@/utils/chatGPT';
 import getReviewPrompt from '@/utils/prompt';
 import { GitHubFileType, useGetGithubRepositoryOverview, useGetRepositoryFiles } from '@/zustand/useGetGithubRepository';
@@ -67,7 +67,7 @@ export default function DynamicPage(props: Props) {
 
   const handleReviewMessage = async (fileName: string) => {
     // If review message is already exist, don't need to fetch again
-    if (reviewMessages[fileName]) return;
+    if (reviewMessages?.[fileName]?.length) return;
 
     // eslint-disable-next-line max-len
     const contentFile = await getContentFileRepository({ fileName, pathName: overview!.full_name, branch: overview!.default_branch });
@@ -75,26 +75,29 @@ export default function DynamicPage(props: Props) {
 
     const prompt = getReviewPrompt(contentFile);
 
-    const message = await getReviewFromChatGPT(prompt);
+    const messages = [{ role: 'system', content: prompt }];
+
+    const message = await getReviewFromChatGPT(messages);
     if (!message) return;
 
-    setReviewMessages((prev) => {
-      const newReviewMessage: ReviewMessage = {
-        id: fileName,
-        role: ReviewMessageRole.BOT,
-        message,
-      };
+    setReviewMessages((prev) => ({
+      ...prev,
+      [fileName]: [...messages, { role: ReviewMessageRole.ASSISTANT, content: message }],
+    }));
+  };
 
-      if (prev[fileName]) return prev;
+  const handleUserChat = async (message: string, fileName: string) => {
+    // eslint-disable-next-line max-len
+    const newMessagesRequest = [...reviewMessages?.[fileName] ?? [], { role: ReviewMessageRole.USER, content: message }];
 
-      return {
-        ...prev,
-        [fileName]: [
-          ...prev[fileName] ?? [],
-          newReviewMessage,
-        ],
-      };
-    });
+    const newMessage = await getReviewFromChatGPT(newMessagesRequest);
+    if (!newMessage) return;
+
+    setReviewMessages((prev) => ({
+      ...prev,
+      // eslint-disable-next-line max-len
+      [fileName]: [...newMessagesRequest, { role: ReviewMessageRole.ASSISTANT, content: newMessage }],
+    }));
   };
 
   const onCheckRepositoryPublic = async () => {
@@ -112,14 +115,17 @@ export default function DynamicPage(props: Props) {
       return;
     }
 
+    // API get 10 reviews page 1
+    // 1. object messages -> find value by key
+    // API get 10 reviews -> push currentPage lên, zustand sẽ slice ra 10 file tương ứng page
+    // sau đó get content 10 files (await Prmoses([files]])),
+    // rồi  gọi GPT 10 reviews (await Promise.all)
+
+    setPage(1);
+
     setMounted(true);
   };
 
-  /**
-    * @description Hook to check repository
-    * step 1: Check if repository's link is valid
-    * step 2: Check if repository is existing/public
-  */
   React.useEffect(() => {
     if (!params.slug.length || params.slug.length < 2) {
       router.push(ROUTES.HOME);
@@ -155,8 +161,9 @@ export default function DynamicPage(props: Props) {
                   <ReviewCard
                     key={file.sha}
                     fileName={file.path}
-                    onReviewMessageChange={handleReviewMessage}
                     reviewMessages={reviewMessages?.[file.path] ?? []}
+                    onReviewMessageChange={handleReviewMessage}
+                    onUserChat={handleUserChat}
                   />
                 ))}
               </CardContent>

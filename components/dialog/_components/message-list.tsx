@@ -2,10 +2,11 @@ import * as React from 'react';
 
 import Message from '@/components/common/message';
 
-import { ReviewMessage, ReviewMessageRole } from '@/types/chatGPT';
+import { OpenAIMessage } from '@/services';
+import { ReviewMessageRole } from '@/types/chatGPT';
 
 export interface MessageListProps {
-  messageList: ReviewMessage[]
+  messageList: OpenAIMessage[]
 }
 
 function MessageList({ messageList }: MessageListProps) {
@@ -13,9 +14,9 @@ function MessageList({ messageList }: MessageListProps) {
     <div className="flex flex-col gap-y-2">
       {messageList.map((message) => (
         <Message
-          key={message.id}
+          key={message.content}
           isUser={message.role === ReviewMessageRole.USER}
-          markdownText={message.message}
+          markdownText={message.content}
         />
       ))}
     </div>

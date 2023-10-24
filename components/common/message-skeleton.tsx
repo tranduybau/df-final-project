@@ -20,7 +20,7 @@ export default function MessageSkeleton({ isHumanMess = false }: MessageSkeleton
     <div className="flex items-start space-x-3 p-3">
       <Skeleton className="h-12 w-12 rounded-full" />
 
-      <Skeleton className="h-36 w-full rounded-md" />
+      <Skeleton className="h-60 w-full rounded-md" />
     </div>
   );
 }

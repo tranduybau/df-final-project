@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { cn } from '@/lib/utils';
-import { ReviewMessage } from '@/types/chatGPT';
+import { OpenAIMessage } from '@/services';
 
 const Message = dynamic(() => import('@/components/common/message'), {
   loading: () => <MessageSkeleton />,
@@ -53,8 +53,9 @@ const gradeColor = (gradeValue: string | -1) => {
 
 export interface ReviewCardProps {
   fileName: string;
-  reviewMessages: ReviewMessage[];
+  reviewMessages: OpenAIMessage[];
   onReviewMessageChange: (fileName: string) => void;
+  onUserChat: (message:string, fileName: string) => void;
 }
 
 function extractCodeQuality(input: string) {
@@ -72,6 +73,7 @@ export default function ReviewCard({
   fileName,
   reviewMessages,
   onReviewMessageChange,
+  onUserChat,
 }: ReviewCardProps) {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -87,13 +89,30 @@ export default function ReviewCard({
   };
 
   const handleToggle = async () => {
-    setOpen(!open);
-    handleFetchReviewMessages();
+    const newOpen = !open;
+    setOpen(newOpen);
+
+    if (newOpen) {
+      handleFetchReviewMessages();
+    }
   };
 
   const handleOpenChatGPTDialog = async () => {
-    setOpenChatGPTDialog(!openChatGPTDialog);
-    handleFetchReviewMessages();
+    const newOpenChatGPTDialog = !openChatGPTDialog;
+    setOpenChatGPTDialog(newOpenChatGPTDialog);
+
+    if (newOpenChatGPTDialog) {
+      handleFetchReviewMessages();
+    }
+  };
+
+  const handleUserChatSubmit = async (message: string) => {
+    // Prevent fetch review messages if loading
+    if (isLoading) return;
+
+    setIsLoading(true);
+    await onUserChat(message, fileName);
+    setIsLoading(false);
   };
 
   return (
@@ -117,7 +136,7 @@ export default function ReviewCard({
 
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-x-4">
-            {!reviewMessages?.[0]?.message && (
+            {!reviewMessages?.[1]?.content && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
@@ -134,18 +153,36 @@ export default function ReviewCard({
               </TooltipProvider>
             )}
 
-            {reviewMessages?.[0]?.message && (
+            {reviewMessages?.[1]?.content && (
               <div
                 className={cn(
                   'flex h-6 w-6 items-center justify-center rounded-full border text-sm font-extrabold',
                   gradeColor(
-                    extractCodeQuality(reviewMessages?.[0]?.message || ''),
+                    extractCodeQuality(reviewMessages?.[1]?.content || ''),
                   ),
                 )}
               >
-                <span>
-                  {extractCodeQuality(reviewMessages?.[0]?.message || '')}
-                </span>
+                {typeof extractCodeQuality(reviewMessages?.[1]?.content) === 'string' ? (
+                  <span>
+                    {extractCodeQuality(reviewMessages?.[1]?.content || '')}
+                  </span>
+                )
+                  : (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full border bg-slate-200 text-sm font-extrabold dark:bg-slate-500">
+                            <Icon name="x" className="h-4 w-4" />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            Something went wrong. Please try again.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
               </div>
             )}
 
@@ -165,6 +202,7 @@ export default function ReviewCard({
               isLoading={isLoading}
               dialogOpen={openChatGPTDialog}
               onDialogOpenChange={handleOpenChatGPTDialog}
+              onUserChatSubmit={handleUserChatSubmit}
             />
           </button>
         </div>
@@ -175,9 +213,17 @@ export default function ReviewCard({
           <div className="h-full overflow-y-auto">
             {/* eslint-disable-next-line max-len */}
             {isLoading && <MessageSkeleton />}
-            {' '}
-            {!isLoading && reviewMessages?.[0]?.message && (
-              <Message markdownText={reviewMessages[0].message} hiddenShadow />
+            {!isLoading && reviewMessages?.[1]?.content && (
+              <Message markdownText={reviewMessages[1].content} hiddenShadow />
+            )}
+
+            {!isLoading && !reviewMessages?.[1]?.content && (
+              <div className="flex h-full flex-col items-center justify-center">
+                <Icon name="inbox" className="text-gray-500 dark:text-gray-400" size={30} />
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  No review messages yet
+                </p>
+              </div>
             )}
           </div>
         </div>

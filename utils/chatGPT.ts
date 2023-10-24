@@ -1,7 +1,10 @@
 import { toast } from '@/components/ui/use-toast';
 
 import { getToken } from '@/context/auth';
-import { getChatCompletions } from '@/services';
+import {
+  GetChatCompletionsParams, OpenAIMessage, OpenAIRequest, OpenAIResponse,
+} from '@/services';
+import { requester } from '@/services/mutator/requester';
 
 export interface Choice {
   message: Message
@@ -60,11 +63,24 @@ export async function getContentFileRepository(params: ContentFileParams) {
   }
 }
 
-export async function getReviewFromChatGPT(prompt: string) {
+const getChatWithStream = (
+  openAIRequest: OpenAIRequest,
+  params?: GetChatCompletionsParams,
+) => requester<OpenAIResponse>(
+  {
+    url: '/chat/completions',
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    data: openAIRequest,
+    params,
+  },
+);
+
+export async function getReviewFromChatGPT(messages: OpenAIMessage[]) {
   try {
     const data = {
-      model: 'openai/gpt-3.5-turbo',
-      messages: [{ role: 'system', content: prompt }],
+      model: 'openai/gpt-4',
+      messages,
     };
 
     const token = getToken();
@@ -75,7 +91,7 @@ export async function getReviewFromChatGPT(prompt: string) {
       authorization: `${token}`,
     };
 
-    const response = await getChatCompletions(data, params);
+    const response = await getChatWithStream(data, params);
 
     if (response) {
       toast({}).dismiss();

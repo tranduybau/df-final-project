@@ -16,25 +16,43 @@ import {
 
 import chatGptImage from '@/assets/images/chatgpt.webp';
 import { cn } from '@/lib/utils';
-import { ReviewMessage } from '@/types/chatGPT';
+import { OpenAIMessage } from '@/services';
 
 import AppTextArea from '../common/app-textarea';
 import Icon from '../common/icon';
+import MessageSkeleton from '../common/message-skeleton';
 
 import MessageList from './_components/message-list';
-import MessageSkeletonList from './_components/message-skeleton-list';
 
 export interface ChatWithGPTDialogProps {
-  reviewMessages: ReviewMessage[];
+  reviewMessages: OpenAIMessage[];
   isLoading: boolean;
   dialogOpen: boolean;
   onDialogOpenChange: () => void;
+  onUserChatSubmit: (message: string) => void;
 }
 
 export default function ChatWithGPTDialog({
-  reviewMessages, isLoading, dialogOpen, onDialogOpenChange,
+  reviewMessages, isLoading, dialogOpen, onDialogOpenChange, onUserChatSubmit,
 }: ChatWithGPTDialogProps) {
   const [message, setMessage] = React.useState('');
+
+  const reviewMessagesWithoutPrompt = React.useMemo(
+    () => {
+      if (reviewMessages.length > 1) {
+        return reviewMessages.slice(1);
+      }
+      return reviewMessages;
+    },
+    [reviewMessages],
+  );
+
+  const handleSubmitChat = () => {
+    if (message) {
+      onUserChatSubmit(message);
+      setMessage('');
+    }
+  };
 
   return (
     <Dialog open={dialogOpen} onOpenChange={onDialogOpenChange}>
@@ -62,8 +80,9 @@ export default function ChatWithGPTDialog({
 
         <div className="h-[70vh] overflow-hidden py-4">
           <div className="h-full overflow-y-auto">
-            {isLoading ? <MessageSkeletonList />
-              : <MessageList messageList={reviewMessages} />}
+            {reviewMessagesWithoutPrompt
+            && <MessageList messageList={reviewMessagesWithoutPrompt} />}
+            {isLoading && <MessageSkeleton />}
             <div
               ref={(node) => {
                 // When the node is available, scroll to the bottom.
@@ -88,6 +107,7 @@ export default function ChatWithGPTDialog({
               variant="ghost"
               size="icon"
               className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full"
+              onClick={handleSubmitChat}
             >
               <div className="relative">
                 <Icon
