@@ -18,8 +18,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import BlurDeco from '@/assets/images/blur.svg';
 import CaroDeco from '@/assets/images/caro.svg';
+import CaroLightDeco from '@/assets/images/caro-light.svg';
 import ROUTES from '@/constants/ROUTES';
 
 import SearchForm from './_components/search-form';
@@ -29,8 +29,8 @@ export default function IndexPage() {
   return (
     <main>
       <section className="relative flex h-[60dvh] flex-col items-center justify-center">
-        <Image className="absolute left-0 top-0 h-full w-full object-cover opacity-30" src={CaroDeco} alt="" />
-        <Image className="absolute left-0 top-0 h-full w-full object-cover opacity-50" src={BlurDeco} alt="" />
+        <Image className="absolute left-0 top-0 h-full w-full object-cover opacity-30 dark:hidden" src={CaroDeco} alt="" />
+        <Image className="light:hidden absolute left-0 top-0 h-full w-full object-cover opacity-10" src={CaroLightDeco} alt="" />
 
         <div className="container relative">
           <div className="flex flex-col items-center gap-2">
@@ -53,9 +53,7 @@ export default function IndexPage() {
           className="my-6 whitespace-pre text-center text-3xl font-extrabold !leading-loose tracking-tighter md:my-10 md:text-4xl"
         >
           Why Collaborate
-          {' '}
           {'\n'}
-          {' '}
           with us?
         </h2>
 
