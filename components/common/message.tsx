@@ -17,6 +17,7 @@ function CodeCopyBtn({ children }: React.PropsWithChildren) {
   const [copyOk, setCopyOk] = React.useState(false);
 
   const handleClick = () => {
+    // @ts-ignore
     navigator.clipboard.writeText(children?.props?.children);
 
     setCopyOk(true);
@@ -104,7 +105,7 @@ export interface MessageProps {
 }
 
 export default function Message({
-  isUser,
+  isUser = false,
   markdownText,
   hiddenShadow = false,
 }:MessageProps) {
@@ -146,8 +147,3 @@ export default function Message({
     </div>
   );
 }
-
-Message.defaultProps = {
-  isUser: false,
-  hiddenShadow: false,
-};

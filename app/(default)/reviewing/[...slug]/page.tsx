@@ -74,6 +74,7 @@ export default function DynamicPage(props: Props) {
     if (!contentFile) return;
 
     const prompt = getReviewPrompt(contentFile);
+
     const message = await getReviewFromChatGPT(prompt);
     if (!message) return;
 
@@ -152,7 +153,6 @@ export default function DynamicPage(props: Props) {
               <CardContent className="flex flex-col gap-y-2 p-4">
                 {filteredFiles.map((file: GitHubFileType) => (
                   <ReviewCard
-                    grade="A"
                     key={file.sha}
                     fileName={file.path}
                     onReviewMessageChange={handleReviewMessage}

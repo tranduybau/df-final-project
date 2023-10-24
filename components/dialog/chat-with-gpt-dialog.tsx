@@ -27,13 +27,17 @@ import MessageSkeletonList from './_components/message-skeleton-list';
 export interface ChatWithGPTDialogProps {
   reviewMessages: ReviewMessage[];
   isLoading: boolean;
+  dialogOpen: boolean;
+  onDialogOpenChange: () => void;
 }
 
-export default function ChatWithGPTDialog({ reviewMessages, isLoading }: ChatWithGPTDialogProps) {
+export default function ChatWithGPTDialog({
+  reviewMessages, isLoading, dialogOpen, onDialogOpenChange,
+}: ChatWithGPTDialogProps) {
   const [message, setMessage] = React.useState('');
 
   return (
-    <Dialog>
+    <Dialog open={dialogOpen} onOpenChange={onDialogOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
           <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100">

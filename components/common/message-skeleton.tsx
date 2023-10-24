@@ -6,7 +6,7 @@ interface MessageSkeletonProps {
   isHumanMess?: boolean
 }
 
-export default function MessageSkeleton({ isHumanMess }: MessageSkeletonProps) {
+export default function MessageSkeleton({ isHumanMess = false }: MessageSkeletonProps) {
   if (isHumanMess) {
     return (
       <div className="flex items-start justify-end space-x-3 p-3">
@@ -24,7 +24,3 @@ export default function MessageSkeleton({ isHumanMess }: MessageSkeletonProps) {
     </div>
   );
 }
-
-MessageSkeleton.defaultProps = {
-  isHumanMess: false,
-};

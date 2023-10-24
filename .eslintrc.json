@@ -16,7 +16,9 @@
     "react/jsx-no-bind": "off",
     "react/jsx-pascal-case": "off",
     "react/jsx-props-no-spreading": "off",
-    "@typescript-eslint/no-throw-literal": "off"
+    "@typescript-eslint/no-throw-literal": "off",
+    "linebreak-style": 0,
+    "react/require-default-props": "off"
   },
   "settings": {
     "tailwindcss": {
