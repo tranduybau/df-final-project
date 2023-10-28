@@ -20,7 +20,7 @@ const AppTextArea = React.forwardRef<HTMLTextAreaElement, AppTextAreaProps>(
       {leftIcon && (
       <Icon
         name={leftIcon}
-        className="absolute inset-y-0 left-3 mt-2 h-6 w-6 text-gray-500"
+        className="absolute inset-y-0 left-3 mt-2 h-6 w-6 text-gray-400"
       />
       )}
       <Textarea className={cn('pl-11', className)} ref={ref} {...props} />

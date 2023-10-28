@@ -1,4 +1,5 @@
 import { toast } from '@/components/ui/use-toast';
+import gptModel from '@/constants/gptModel';
 
 import { getToken } from '@/context/auth';
 import {
@@ -79,7 +80,7 @@ const getChatWithStream = (
 export async function getReviewFromChatGPT(messages: OpenAIMessage[]) {
   try {
     const data = {
-      model: 'openai/gpt-4',
+      model: gptModel.gpt35,
       messages,
     };
 

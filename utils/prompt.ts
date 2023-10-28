@@ -35,8 +35,8 @@ Use the following response format, keeping the section headings as they are, and
    - Encourage the use of automated testing and continuous integration for quality assurance. Suggest implementing unit tests and setting up CI/CD pipelines for automated testing.
 
 **Overall Code Quality (A/B/C/D)**:
-1. Please provide an overall assessment of the code quality on a scale of A, B, C, or D, where A represents excellent and D represents poor. Provide a letter grade with this format:
-  - Example: "=== A ===" (You must always have points according to this format)
+1. Provide an overall assessment of the code quality on a scale of A, B, C, or D, where A represents excellent and D represents poor.
+  - Example: "=== A ===", "=== B ===", "=== C ===", "=== D ===" (Please make sure that the generated text includes the assessment in the format "=== C ===". This part is crucial and must be included in the result.)
 
 
 Here is my code:
@@ -45,7 +45,7 @@ Here is my code:
 ${content}
 \`\`\`
 
-(Remember one important thing, please extract the code corresponding to each of your feedback in the form of backticks (\`\`\`) so I can display it in markdown format, remember to change the backticks from (\`\`\`) to (\`\`\`))
+(Remember one important thing, please extract the code corresponding to each of your feedback in the form of backticks (\`\`\`) so I can display it in markdown format)
  `;
 
 export default getReviewPrompt;
