@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import AppInput from '@/components/common/app-input';
 import Icon from '@/components/common/icon';
