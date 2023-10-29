@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 
 import Icon from '@/components/common/icon';
@@ -16,17 +16,11 @@ import {
 
 import { cn } from '@/lib/utils';
 import { OpenAIMessage } from '@/services';
+import { useGPTMessageDialog } from '@/zustand/useModal';
 
 const Message = dynamic(() => import('@/components/common/message'), {
   loading: () => <MessageSkeleton />,
 });
-
-const ChatWithGPTDialog = dynamic(
-  () => import('@/components/dialog/chat-with-gpt-dialog'),
-  {
-    loading: () => <Skeleton className="h-9 w-[158px] rounded-md" />,
-  },
-);
 
 const gradeColor = (gradeValue: string | -1) => {
   const colorMap = {
@@ -75,6 +69,8 @@ export default function ReviewCard({
   isLoadingReview,
   onUserSendMessage,
 }: ReviewCardProps) {
+  const { setIsOpen } = useGPTMessageDialog();
+
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -167,13 +163,10 @@ export default function ReviewCard({
             type="button"
             onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
               e.stopPropagation();
+              setIsOpen(true);
             }}
           >
-            <ChatWithGPTDialog
-              content={content}
-              isLoading={isLoading || isLoadingReview}
-              onSubmitMessage={handleUserSendMessage}
-            />
+            Chat with GPT
           </button>
         </div>
       </div>

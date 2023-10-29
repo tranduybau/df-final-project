@@ -1,8 +1,7 @@
 'use client';
 
-import * as React from 'react';
+import React from 'react';
 import * as DOMPurify from 'dompurify';
-import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,12 +11,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 
-import chatGptImage from '@/assets/images/chatgpt.webp';
 import { cn } from '@/lib/utils';
 import { OpenAIMessage } from '@/services';
+import { useGPTMessageDialog } from '@/zustand/useModal';
 
 import AppTextArea from '../common/app-textarea';
 import Icon from '../common/icon';
@@ -31,9 +29,13 @@ export interface ChatWithGPTDialogProps {
   onSubmitMessage: (message: string) => void;
 }
 
-export default function ChatWithGPTDialog({
-  content, isLoading, onSubmitMessage,
-}: ChatWithGPTDialogProps) {
+export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
+  const {
+    content, isLoading, onSubmitMessage,
+  } = props;
+
+  console.log('dynamic nè');
+
   const [message, setMessage] = React.useState('');
 
   const contentWithoutPrompt = React.useMemo(
@@ -62,15 +64,7 @@ export default function ChatWithGPTDialog({
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
-          <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100">
-            <Image src={chatGptImage} alt="chat-gpt-image" />
-          </div>
-          Chat with GPT
-        </Button>
-      </DialogTrigger>
+    <Dialog open={!!content.length}>
       <DialogContent
         className="max-w-full sm:max-w-7xl"
         onInteractOutside={(e: any) => {
