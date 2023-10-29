@@ -13,6 +13,8 @@ import remarkToc from 'remark-toc';
 import chatGptImage from '@/assets/images/chatgpt.webp';
 import { cn } from '@/lib/utils';
 
+import { Avatar, AvatarFallback } from '../ui/avatar';
+
 function CodeCopyBtn({ children }: React.PropsWithChildren) {
   const [copyOk, setCopyOk] = React.useState(false);
 
@@ -102,12 +104,14 @@ export interface MessageProps {
   isUser?: boolean
   markdownText: string
   hiddenShadow?: boolean
+  userName?: string
 }
 
 export default function Message({
   isUser = false,
   markdownText,
   hiddenShadow = false,
+  userName,
 }:MessageProps) {
   return (
     <div
@@ -120,7 +124,13 @@ export default function Message({
         className={cn('flex items-start', isUser ? 'flex-row-reverse' : 'flex-row')}
       >
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-400">
-          {isUser || <Image src={chatGptImage} alt="chat-gpt-image" />}
+          {isUser ? (
+            <Avatar className="h-10 w-10">
+              <AvatarFallback>
+                {userName?.charAt(0)?.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          ) : <Image src={chatGptImage} alt="chat-gpt-image" />}
         </div>
         <div
           className={cn(

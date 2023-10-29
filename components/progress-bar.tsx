@@ -1,17 +1,21 @@
 'use client';
 
 import React, { PropsWithChildren } from 'react';
+import { isSSR } from '@dwarvesf/react-utils';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 
 const options = { showSpinner: false };
 
 function ProgressBarProvider({ children }: PropsWithChildren) {
+  const isDarkMode = isSSR() ? 'light' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const progressBarColor = isDarkMode ? '#fff' : '#131313';
+
   return (
     <>
       {children}
       <ProgressBar
         height="4px"
-        color="#131313"
+        color={progressBarColor}
         options={options}
         shallowRouting
       />

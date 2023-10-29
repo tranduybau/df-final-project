@@ -51,74 +51,57 @@ const gradeColor = (gradeValue: string | -1) => {
   }
 };
 
-export interface ReviewCardProps {
-  fileName: string;
-  reviewMessages: OpenAIMessage[];
-  onReviewMessageChange: (fileName: string) => void;
-  onUserChat: (message:string, fileName: string) => void;
-}
-
 function extractCodeQuality(input: string) {
-  const codeQualityMatch = input.match(/=== (A|B|C|D) ===/);
+  const codeQualityMatch = input.match(/=== (A|B|C|D) ===|\((A|B|C|D)\)|(A|B|C|D)(?:\.|$)/);
 
   if (codeQualityMatch) {
-    const codeQuality = codeQualityMatch[1];
+    const codeQuality = codeQualityMatch[1] ?? codeQualityMatch[2] ?? codeQualityMatch[3];
     return codeQuality;
   }
 
   return -1;
 }
 
+export interface ReviewCardProps {
+  fileName: string;
+  content: OpenAIMessage[];
+  isLoadingReview: boolean;
+  onUserSendMessage: (message:string, fileName: string) => void;
+}
+
 export default function ReviewCard({
   fileName,
-  reviewMessages,
-  onReviewMessageChange,
-  onUserChat,
+  content,
+  isLoadingReview,
+  onUserSendMessage,
 }: ReviewCardProps) {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [openChatGPTDialog, setOpenChatGPTDialog] = React.useState(false);
 
-  const handleFetchReviewMessages = async () => {
-    // Prevent fetch review messages if loading
-    if (isLoading) return;
-
-    setIsLoading(true);
-    await onReviewMessageChange(fileName);
-    setIsLoading(false);
-  };
+  const showSkeleton = isLoading || !content?.[1]?.content;
+  const showReview = !isLoading && content?.[1]?.content;
+  const hasNoReview = !isLoading && !isLoadingReview && !content?.[1]?.content;
 
   const handleToggle = async () => {
     const newOpen = !open;
     setOpen(newOpen);
-
-    if (newOpen) {
-      handleFetchReviewMessages();
-    }
   };
 
-  const handleOpenChatGPTDialog = async () => {
-    const newOpenChatGPTDialog = !openChatGPTDialog;
-    setOpenChatGPTDialog(newOpenChatGPTDialog);
-
-    if (newOpenChatGPTDialog) {
-      handleFetchReviewMessages();
-    }
-  };
-
-  const handleUserChatSubmit = async (message: string) => {
+  const handleUserSendMessage = async (message: string) => {
     // Prevent fetch review messages if loading
     if (isLoading) return;
 
     setIsLoading(true);
-    await onUserChat(message, fileName);
+    await onUserSendMessage(message, fileName);
     setIsLoading(false);
   };
 
   return (
     <div className="flex flex-col">
-      <button
-        type="button"
+
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
+       jsx-a11y/no-static-element-interactions */}
+      <div
         className="flex cursor-pointer items-center gap-x-4 p-1 hover:bg-slate-100 dark:hover:bg-indigo-900"
         onClick={handleToggle}
       >
@@ -136,42 +119,31 @@ export default function ReviewCard({
 
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-x-4">
-            {!reviewMessages?.[1]?.content && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full border bg-slate-200 text-sm font-extrabold dark:bg-slate-500">
-                      <Icon name="loader" className="h-4 w-4" />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      Code Quality score will be visible after your review is completed.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+            {showSkeleton && (
+              <div>
+                <Skeleton className="h-7 w-7 rounded-full" />
+              </div>
             )}
 
-            {reviewMessages?.[1]?.content && (
+            {showReview && (
               <div
                 className={cn(
                   'flex h-6 w-6 items-center justify-center rounded-full border text-sm font-extrabold',
                   gradeColor(
-                    extractCodeQuality(reviewMessages?.[1]?.content || ''),
+                    extractCodeQuality(content?.[1]?.content || ''),
                   ),
                 )}
               >
-                {typeof extractCodeQuality(reviewMessages?.[1]?.content) === 'string' ? (
+                {typeof extractCodeQuality(content?.[1]?.content) === 'string' ? (
                   <span>
-                    {extractCodeQuality(reviewMessages?.[1]?.content || '')}
+                    {extractCodeQuality(content?.[1]?.content || '')}
                   </span>
                 )
                   : (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <div className="flex h-6 w-6 items-center justify-center rounded-full border bg-slate-200 text-sm font-extrabold dark:bg-slate-500">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full border border-red-400 bg-red-100 text-sm font-extrabold text-red-400 dark:bg-red-500 dark:text-white">
                             <Icon name="x" className="h-4 w-4" />
                           </div>
                         </TooltipTrigger>
@@ -198,32 +170,29 @@ export default function ReviewCard({
             }}
           >
             <ChatWithGPTDialog
-              reviewMessages={reviewMessages}
-              isLoading={isLoading}
-              dialogOpen={openChatGPTDialog}
-              onDialogOpenChange={handleOpenChatGPTDialog}
-              onUserChatSubmit={handleUserChatSubmit}
+              content={content}
+              isLoading={isLoading || isLoadingReview}
+              onSubmitMessage={handleUserSendMessage}
             />
           </button>
         </div>
-      </button>
+      </div>
 
       {open && (
         <div className="mt-2 h-96 overflow-hidden rounded-md border border-slate-100 p-4 dark:border-slate-900">
           <div className="h-full overflow-y-auto">
-            {/* eslint-disable-next-line max-len */}
-            {isLoading && <MessageSkeleton />}
-            {!isLoading && reviewMessages?.[1]?.content && (
-              <Message markdownText={reviewMessages[1].content} hiddenShadow />
-            )}
 
-            {!isLoading && !reviewMessages?.[1]?.content && (
-              <div className="flex h-full flex-col items-center justify-center">
-                <Icon name="inbox" className="text-gray-500 dark:text-gray-400" size={30} />
-                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                  No review messages yet
-                </p>
-              </div>
+            {showSkeleton && <MessageSkeleton /> }
+
+            {showReview && <Message markdownText={content[1].content} hiddenShadow /> }
+
+            {hasNoReview && (
+            <div className="flex h-full flex-col items-center justify-center">
+              <Icon name="inbox" className="text-gray-500 dark:text-gray-400" size={30} />
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                No review messages yet
+              </p>
+            </div>
             )}
           </div>
         </div>
