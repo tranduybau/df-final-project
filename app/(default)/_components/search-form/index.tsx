@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 
 import StartDeco from '@/assets/images/star.svg';
 import ROUTES from '@/constants/ROUTES';
-import { useAuthContext } from '@/context/auth';
 import { useGetGithubRepositoryOverview } from '@/zustand/useGetGithubRepository';
 
 const formSchema = z.object({
@@ -51,7 +50,6 @@ const formSchema = z.object({
 
 function SearchForm() {
   const router = useRouter();
-  const { isLogin } = useAuthContext();
 
   const {
     isLoadingGithubRepositoryOverview,
@@ -66,11 +64,6 @@ function SearchForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (!isLogin) {
-      router.push(ROUTES.SIGN_IN);
-      return;
-    }
-
     const formattedLink = data.repository.replace('https://github.com/', '').replace('github.com/', '');
     const repository = await actionGetGithubRepositoryOverview(formattedLink);
 
