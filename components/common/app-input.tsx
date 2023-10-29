@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import dynamicIconImports from 'lucide-react/dynamicIconImports';
 
 import { cn } from '@/lib/utils';
