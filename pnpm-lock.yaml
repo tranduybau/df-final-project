@@ -44,6 +44,9 @@ dependencies:
   clsx:
     specifier: ^1.2.1
     version: 1.2.1
+  dompurify:
+    specifier: ^3.0.6
+    version: 3.0.6
   lodash.debounce:
     specifier: ^4.0.8
     version: 4.0.8
@@ -121,6 +124,9 @@ devDependencies:
   '@faker-js/faker':
     specifier: ^8.1.0
     version: 8.2.0
+  '@types/dompurify':
+    specifier: ^3.0.4
+    version: 3.0.4
   '@types/lodash.debounce':
     specifier: ^4.0.8
     version: 4.0.8
@@ -1690,6 +1696,12 @@ packages:
     dependencies:
       '@types/ms': 0.7.32
 
+  /@types/dompurify@3.0.4:
+    resolution: {integrity: sha512-1Jk8S/IRzNSbwQRbuGuLFHviwxQ8pX81ZEW3INY9432Cwb4VedkBYan8gSIXVLOLHBtimOmUTEYphjRVmo+30g==}
+    dependencies:
+      '@types/trusted-types': 2.0.5
+    dev: true
+
   /@types/es-aggregate-error@1.0.3:
     resolution: {integrity: sha512-GmY61WWXQemfJp+qmMu6RsrNev0eoEWeWtg46w9pdXje23jRJrf7yETbAkl7F+CfQJSKW7w3//sTYtQTt+R5Lg==}
     dependencies:
@@ -1801,6 +1813,10 @@ packages:
     resolution: {integrity: sha512-xCfTC/eL/GmvMC24b42qJpYSTdCIBwWcfskDF80ztXtnU6pKXyvuZP2EConb2K9ps0s7gMhCa0P1foy7wiItMA==}
     dependencies:
       '@types/node': 17.0.45
+    dev: true
+
+  /@types/trusted-types@2.0.5:
+    resolution: {integrity: sha512-I3pkr8j/6tmQtKV/ZzHtuaqYSQvyjGRKH4go60Rr0IDLlFxuRT5V32uvB1mecM5G1EVAUyF/4r4QZ1GHgz+mxA==}
     dev: true
 
   /@types/ungap__structured-clone@0.3.1:
@@ -2788,6 +2804,10 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       webidl-conversions: 5.0.0
+    dev: false
+
+  /dompurify@3.0.6:
+    resolution: {integrity: sha512-ilkD8YEnnGh1zJ240uJsW7AzE+2qpbOUYjacomn3AvJ6J4JhKGSZ2nh4wUIXPZrEPppaCLx5jFe8T89Rk8tQ7w==}
     dev: false
 
   /electron-to-chromium@1.4.556:

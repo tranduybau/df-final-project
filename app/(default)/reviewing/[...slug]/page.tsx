@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 import debounce from 'lodash.debounce';
 import { RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 import ROUTES from '@/constants/ROUTES';
+import { getContentFileRepository, getReviewFromChatGPT } from '@/services/chatGPT';
 import { ReviewMessageMap, ReviewMessageRole } from '@/types/chatGPT';
-import { getContentFileRepository, getReviewFromChatGPT } from '@/utils/chatGPT';
 import getReviewPrompt from '@/utils/prompt';
 import { GitHubFileType, useGetGithubRepositoryOverview, useGetRepositoryFiles } from '@/zustand/useGetGithubRepository';
 
@@ -34,18 +34,21 @@ export default function DynamicPage(props: Props) {
   const { overview, actionGetGithubRepositoryOverview } = useGetGithubRepositoryOverview();
   const { files, actionGetGithubRepositoryFiles } = useGetRepositoryFiles();
 
-  const [mounted, setMounted] = React.useState(false); // show loading ui on init page
+  const [mounted, setMounted] = React.useState(false);
   const [page, setPage] = React.useState(1);
   const [searchFilesValue, setSearchFilesValue] = React.useState('');
   const [reviewMessages, setReviewMessages] = React.useState<ReviewMessageMap>({});
+  const [isLoadingReview, setIsLoadingReview] = React.useState(false);
 
   const filteredFiles = React.useMemo(
     () => {
       if (searchFilesValue) {
-        // eslint-disable-next-line max-len
-        return files.filter((file: GitHubFileType) => file.path.toLowerCase().includes(searchFilesValue.toLowerCase())).slice((page - 1) * 10, page * 10);
+        return files.filter((file: GitHubFileType) => {
+          const fileName = file.path.toLowerCase();
+          return fileName.includes(searchFilesValue.toLowerCase());
+        });
       }
-      return files.slice((page - 1) * 10, page * 10);
+      return files.slice((page - 1) * PER_PAGE, page * PER_PAGE);
     },
     [files, page, searchFilesValue],
   );
@@ -65,12 +68,17 @@ export default function DynamicPage(props: Props) {
     setPage(1);
   }, 500);
 
-  const handleReviewMessage = async (fileName: string) => {
+  const onGetAllReviewsContent = async (fileName: string) => {
     // If review message is already exist, don't need to fetch again
-    if (reviewMessages?.[fileName]?.length) return;
+    if (reviewMessages?.[fileName]?.length || !overview) return;
 
-    // eslint-disable-next-line max-len
-    const contentFile = await getContentFileRepository({ fileName, pathName: overview!.full_name, branch: overview!.default_branch });
+    const contentFile = await getContentFileRepository(
+      {
+        fileName,
+        pathName: overview.full_name,
+        branch: overview.default_branch,
+      },
+    );
     if (!contentFile) return;
 
     const prompt = getReviewPrompt(contentFile);
@@ -86,21 +94,32 @@ export default function DynamicPage(props: Props) {
     }));
   };
 
-  const handleUserChat = async (message: string, fileName: string) => {
-    // eslint-disable-next-line max-len
-    const newMessagesRequest = [...reviewMessages?.[fileName] ?? [], { role: ReviewMessageRole.USER, content: message }];
+  const handleUserSendMessage = async (message: string, fileName: string) => {
+    const newMessagesRequest = [...reviewMessages?.[fileName] ?? [],
+      { role: ReviewMessageRole.USER, content: message }];
+
+    setReviewMessages((prev) => ({
+      ...prev,
+      [fileName]: [
+        ...newMessagesRequest,
+      ],
+    }));
 
     const newMessage = await getReviewFromChatGPT(newMessagesRequest);
     if (!newMessage) return;
 
     setReviewMessages((prev) => ({
       ...prev,
-      // eslint-disable-next-line max-len
-      [fileName]: [...newMessagesRequest, { role: ReviewMessageRole.ASSISTANT, content: newMessage }],
+      [fileName]: [
+        ...prev?.[fileName] ?? [],
+        {
+          role: ReviewMessageRole.ASSISTANT,
+          content: newMessage,
+        }],
     }));
   };
 
-  const onCheckRepositoryPublic = async () => {
+  const handleFetchRepository = async () => {
     const repository = await actionGetGithubRepositoryOverview(params.slug.join('/'));
 
     if (!repository?.default_branch) {
@@ -115,14 +134,6 @@ export default function DynamicPage(props: Props) {
       return;
     }
 
-    // API get 10 reviews page 1
-    // 1. object messages -> find value by key
-    // API get 10 reviews -> push currentPage lên, zustand sẽ slice ra 10 file tương ứng page
-    // sau đó get content 10 files (await Prmoses([files]])),
-    // rồi  gọi GPT 10 reviews (await Promise.all)
-
-    setPage(1);
-
     setMounted(true);
   };
 
@@ -132,8 +143,29 @@ export default function DynamicPage(props: Props) {
       return;
     }
 
-    onCheckRepositoryPublic();
+    handleFetchRepository();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const getReviewContentForFile = async (file: GitHubFileType) => {
+    await onGetAllReviewsContent(file.path);
+  };
+
+  React.useEffect(() => {
+    if (!overview || filteredFiles?.length === 0) return;
+
+    const fetchReviewData = async () => {
+      setIsLoadingReview(true);
+      await Promise.all(filteredFiles.map(getReviewContentForFile));
+      setIsLoadingReview(false);
+    };
+
+    fetchReviewData();
+  }, [ // eslint-disable-line react-hooks/exhaustive-deps
+    page,
+    searchFilesValue,
+    overview,
+    filteredFiles,
+  ]);
 
   if (!mounted) {
     return (
@@ -161,9 +193,9 @@ export default function DynamicPage(props: Props) {
                   <ReviewCard
                     key={file.sha}
                     fileName={file.path}
-                    reviewMessages={reviewMessages?.[file.path] ?? []}
-                    onReviewMessageChange={handleReviewMessage}
-                    onUserChat={handleUserChat}
+                    content={reviewMessages?.[file.path] ?? []}
+                    isLoadingReview={isLoadingReview}
+                    onUserSendMessage={handleUserSendMessage}
                   />
                 ))}
               </CardContent>

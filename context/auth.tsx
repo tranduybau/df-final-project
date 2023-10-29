@@ -29,8 +29,10 @@ const cleanAuth = () => {
 };
 
 function AuthContextProvider({ children }: PropsWithChildren) {
-  // eslint-disable-next-line max-len
-  const [isLogin, setIsLogin] = useState(() => (isSSR() ? false : Boolean(window.localStorage.getItem(tokenKey))));
+  const [isLogin, setIsLogin] = useState(() => {
+    if (isSSR()) return false;
+    return !!window.localStorage.getItem(tokenKey);
+  });
   const [user, setUser] = useState(() => (isSSR() ? '' : window.localStorage.getItem(userKey) || ''));
 
   const login = useCallback(async (username: string, password: string) => {
