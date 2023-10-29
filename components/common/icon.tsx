@@ -1,5 +1,4 @@
-import { memo } from 'react';
-import * as React from 'react';
+import React from 'react';
 import { LucideProps } from 'lucide-react';
 import dynamicIconImports from 'lucide-react/dynamicIconImports';
 import dynamic from 'next/dynamic';
@@ -14,4 +13,4 @@ function Icon({ name, ...props }: IconProps) {
   return <LucideIcon {...props} />;
 }
 
-export default memo(Icon);
+export default React.memo(Icon);

@@ -1,9 +1,9 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 
-export default function RootLayout({ children }: PropsWithChildren) {
+export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <div className="flex flex-1 flex-col">
       <SiteHeader />
