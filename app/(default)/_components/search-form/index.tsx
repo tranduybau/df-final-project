@@ -55,7 +55,6 @@ function SearchForm() {
     isLoadingGithubRepositoryOverview,
     actionGetGithubRepositoryOverview,
   } = useGetGithubRepositoryOverview();
-  console.log('🚀 ~ file: index.tsx:58 ~ SearchForm ~ isLoadingGithubRepositoryOverview:', isLoadingGithubRepositoryOverview);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

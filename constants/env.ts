@@ -4,6 +4,7 @@ interface ENVType {
   IMAGES_DOMAINS?: string
   GITHUB_API?: string
   GITHUB_CONTENT_API?: string
+  REVIEW_PER_PAGE?: string
 }
 
 const ENV: ENVType = {
@@ -12,6 +13,7 @@ const ENV: ENVType = {
   IMAGES_DOMAINS: process.env.NEXT_PUBLIC_IMAGES_DOMAINS,
   GITHUB_API: process.env.NEXT_PUBLIC_GITHUB_API,
   GITHUB_CONTENT_API: process.env.NEXT_PUBLIC_GITHUB_CONTENT_API,
+  REVIEW_PER_PAGE: process.env.NEXT_PUBLIC_REVIEW_PER_PAGE ?? '1',
 };
 
 export default ENV;

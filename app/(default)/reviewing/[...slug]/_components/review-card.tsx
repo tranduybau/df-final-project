@@ -63,37 +63,34 @@ export interface ReviewCardProps {
   fileName: string;
   content: OpenAIMessage[];
   isLoadingReview: boolean;
-  onUserSendMessage: (message:string, fileName: string) => void;
 }
 
 export default function ReviewCard({
   fileName,
   content,
   isLoadingReview,
-  onUserSendMessage,
 }: ReviewCardProps) {
-  const { setIsOpen } = useGPTMessageDialog();
+  const { selectedFile, actionSelectedFileChange } = useGPTMessageDialog();
 
   const [open, setOpen] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
 
-  const showSkeleton = isLoading || !content?.[1]?.content;
-  const showReview = !isLoading && content?.[1]?.content;
-  const hasNoReview = !isLoading && !isLoadingReview && !content?.[1]?.content;
+  const showSkeleton = !content?.[1]?.content;
+  const showReview = content?.[1]?.content;
+  const hasNoReview = !isLoadingReview && !content?.[1]?.content;
 
   const handleToggle = async () => {
     const newOpen = !open;
     setOpen(newOpen);
   };
 
-  // const handleUserSendMessage = async (message: string) => {
-  //   // Prevent fetch review messages if loading
-  //   if (isLoading) return;
-
-  //   setIsLoading(true);
-  //   await onUserSendMessage(message, fileName);
-  //   setIsLoading(false);
-  // };
+  const handlePopupChatGPT = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    if (!selectedFile) {
+      actionSelectedFileChange(fileName);
+    } else {
+      actionSelectedFileChange('');
+    }
+  };
 
   return (
     <div className="flex flex-col">
@@ -162,12 +159,10 @@ export default function ReviewCard({
           </div>
 
           <Button
+            className="cursor-pointer"
             variant="outline"
             size="sm"
-            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-              e.stopPropagation();
-              setIsOpen(true);
-            }}
+            onClick={handlePopupChatGPT}
           >
             <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100">
               <Image src={chatGptImage} alt="chat-gpt-image" />

@@ -18,11 +18,12 @@ import { OpenAIMessage } from '@/services';
 
 import AppTextArea from '../common/app-textarea';
 import Icon from '../common/icon';
+import MessageList from '../common/message-list';
 import MessageSkeleton from '../common/message-skeleton';
 
-import MessageList from './_components/message-list';
-
 export interface ChatWithGPTDialogProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: any) => void;
   content: OpenAIMessage[];
   isLoading: boolean;
   onSubmitMessage: (message: string) => void;
@@ -30,14 +31,16 @@ export interface ChatWithGPTDialogProps {
 
 export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
   const {
-    content, isLoading, onSubmitMessage,
+    isOpen, setIsOpen, isLoading, content, onSubmitMessage,
   } = props;
 
   const [message, setMessage] = React.useState('');
 
   const contentWithoutPrompt = React.useMemo(
     () => {
-      if (content.length > 1) {
+      if (!content) return [];
+
+      if (content?.length > 1) {
         return content.slice(1);
       }
       return content;
@@ -61,7 +64,7 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
   };
 
   return (
-    <Dialog open={!!content.length}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         className="max-w-full sm:max-w-7xl"
         onInteractOutside={(e: any) => {
