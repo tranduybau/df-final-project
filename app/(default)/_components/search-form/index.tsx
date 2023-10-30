@@ -38,7 +38,7 @@ const formSchema = z.object({
       }
       const formattedLink = value.replace('https://github.com/', '').replace('github.com/', '');
 
-      if (formattedLink.split('/').length < 2) {
+      if (formattedLink.split('/').length !== 2) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Please enter a valid GitHub repository.',
@@ -55,6 +55,7 @@ function SearchForm() {
     isLoadingGithubRepositoryOverview,
     actionGetGithubRepositoryOverview,
   } = useGetGithubRepositoryOverview();
+  console.log('🚀 ~ file: index.tsx:58 ~ SearchForm ~ isLoadingGithubRepositoryOverview:', isLoadingGithubRepositoryOverview);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

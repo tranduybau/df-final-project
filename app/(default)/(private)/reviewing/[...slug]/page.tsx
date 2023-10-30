@@ -10,6 +10,7 @@ import ChatWithGPTDialog from '@/components/dialog/chat-with-gpt-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
+import ReviewCard from '@/app/(default)/reviewing/[...slug]/_components/review-card';
 import ROUTES from '@/constants/ROUTES';
 import { getContentFileRepository, getReviewFromChatGPT } from '@/services/chatGPT';
 import { ReviewMessageMap, ReviewMessageRole } from '@/types/chatGPT';
@@ -17,7 +18,6 @@ import getReviewPrompt from '@/utils/prompt';
 import { GitHubFileType, useGetGithubRepositoryOverview, useGetRepositoryFiles } from '@/zustand/useGetGithubRepository';
 import { useGPTMessageDialog } from '@/zustand/useModal';
 
-import ReviewCard from './_components/review-card';
 import ReviewHeader from './_components/review-header';
 
 const PER_PAGE = 10;

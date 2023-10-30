@@ -15,7 +15,6 @@ import {
 
 import { cn } from '@/lib/utils';
 import { OpenAIMessage } from '@/services';
-import { useGPTMessageDialog } from '@/zustand/useModal';
 
 import AppTextArea from '../common/app-textarea';
 import Icon from '../common/icon';
@@ -33,8 +32,6 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
   const {
     content, isLoading, onSubmitMessage,
   } = props;
-
-  console.log('dynamic nè');
 
   const [message, setMessage] = React.useState('');
 

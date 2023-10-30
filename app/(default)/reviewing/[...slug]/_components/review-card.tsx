@@ -1,7 +1,9 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 import Icon from '@/components/common/icon';
 import MessageSkeleton from '@/components/common/message-skeleton';
@@ -14,6 +16,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import chatGptImage from '@/assets/images/chatgpt.webp';
 import { cn } from '@/lib/utils';
 import { OpenAIMessage } from '@/services';
 import { useGPTMessageDialog } from '@/zustand/useModal';
@@ -83,18 +86,17 @@ export default function ReviewCard({
     setOpen(newOpen);
   };
 
-  const handleUserSendMessage = async (message: string) => {
-    // Prevent fetch review messages if loading
-    if (isLoading) return;
+  // const handleUserSendMessage = async (message: string) => {
+  //   // Prevent fetch review messages if loading
+  //   if (isLoading) return;
 
-    setIsLoading(true);
-    await onUserSendMessage(message, fileName);
-    setIsLoading(false);
-  };
+  //   setIsLoading(true);
+  //   await onUserSendMessage(message, fileName);
+  //   setIsLoading(false);
+  // };
 
   return (
     <div className="flex flex-col">
-
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
        jsx-a11y/no-static-element-interactions */}
       <div
@@ -159,15 +161,20 @@ export default function ReviewCard({
             </span>
           </div>
 
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
               e.stopPropagation();
               setIsOpen(true);
             }}
           >
+            <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100">
+              <Image src={chatGptImage} alt="chat-gpt-image" />
+            </div>
             Chat with GPT
-          </button>
+          </Button>
+
         </div>
       </div>
 

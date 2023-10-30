@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { toast } from '@/components/ui/use-toast';
 
+import ENV from '@/constants/env';
 import { removeDotGitURL } from '@/utils/common';
 
 /**
@@ -131,7 +132,7 @@ export const useGetGithubRepositoryOverview = create<GetGithubRepositoryOverview
     try {
       set({ isLoadingGithubRepositoryOverview: true });
 
-      response = await fetch(`${process.env.NEXT_PUBLIC_GITHUB_API}/${ENDPOINT}`).then((res) => res.json() as Promise<GitHubOverview>);
+      response = await fetch(`${ENV.GITHUB_API}/${ENDPOINT}`).then((res) => res.json() as Promise<GitHubOverview>);
 
       if (response.default_branch) {
         toast({}).dismiss();
@@ -191,7 +192,7 @@ export const useGetRepositoryFiles = create<GetGithubRepositoryFiles>((set) => (
     try {
       set({ isLoading: true });
 
-      response = await fetch(`${process.env.NEXT_PUBLIC_GITHUB_API}/${ENDPOINT}`).then((res) => res.json() as Promise<GetGitHubRepositoryFilesPromise>);
+      response = await fetch(`${ENV.GITHUB_API}/${ENDPOINT}`).then((res) => res.json() as Promise<GetGitHubRepositoryFilesPromise>);
 
       if (response?.sha) {
         // Get only .ts|.tsx|.js|.jsx|.html|.css|.scss files
