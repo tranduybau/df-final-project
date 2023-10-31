@@ -1,23 +1,26 @@
-// Create a ProgressBarProvider component to wrap your application with all the components requiring 'use client', such as next-nprogress-bar or your different contexts...
-"use client"
+'use client';
 
-import { PropsWithChildren } from "react"
-import { AppProgressBar as ProgressBar } from "next-nprogress-bar"
+import React from 'react';
+import { isSSR } from '@dwarvesf/react-utils';
+import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 
-const options = { showSpinner: false }
+const options = { showSpinner: false };
 
-const ProgressBarProvider = ({ children }: PropsWithChildren) => {
+function ProgressBarProvider({ children }: React.PropsWithChildren) {
+  const isDarkMode = isSSR() ? 'light' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const progressBarColor = isDarkMode ? '#fff' : '#131313';
+
   return (
     <>
       {children}
       <ProgressBar
         height="4px"
-        color="#131313"
+        color={progressBarColor}
         options={options}
         shallowRouting
       />
     </>
-  )
+  );
 }
 
-export default ProgressBarProvider
+export default ProgressBarProvider;

@@ -5,3 +5,5 @@ node_modules
 *.esm.js
 # Ignore folder generate from shadcn-ui
 components/ui
+# Ignore folder generate from orval
+services

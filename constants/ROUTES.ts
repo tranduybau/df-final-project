@@ -1,9 +1,12 @@
 const ROUTES = {
-  HOME: "/",
+  HOME: '/',
+  REVIEWING: (path: string) => `/reviewing/${path}`,
 
-  SIGN_IN: "/sign-in",
-  SIGN_UP: "/sign-up",
-  FORGOT_PASSWORD: "/forgot-password",
-}
+  SIGN_IN: '/sign-in',
+  SIGN_UP: '/sign-up',
+  FORGOT_PASSWORD: '/forgot-password',
 
-export default ROUTES
+  CONTACT: '/contact',
+};
+
+export default ROUTES;
