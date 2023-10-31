@@ -1,14 +1,17 @@
-import "@/styles/globals.css"
-import React, {PropsWithChildren} from "react"
-import {Metadata} from "next"
+import React from 'react';
+import { Metadata } from 'next';
 
-import {siteConfig} from "@/config/site"
-import {fontSans} from "@/lib/fonts"
-import {cn} from "@/lib/utils"
-import ProgressBarProvider from "@/components/progress-bar"
-import {TailwindIndicator} from "@/components/tailwind-indicator"
-import {ThemeProvider} from "@/components/theme-provider"
-import {Toaster} from "@/components/ui/toaster";
+import ProgressBarProvider from '@/components/progress-bar';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
+
+import { siteConfig } from '@/config/site';
+import { AuthContextProvider } from '@/context/auth';
+import { fontSans } from '@/lib/fonts';
+import { cn } from '@/lib/utils';
+
+import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   title: {
@@ -17,36 +20,37 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   themeColor: [
-    {media: "(prefers-color-scheme: light)", color: "white"},
-    {media: "(prefers-color-scheme: dark)", color: "black"},
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
   ],
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
-  },
-}
+    icon: '/favicon_io/favicon.ico',
+    shortcut: '/favicon_io/favicon-16x16.png',
+    apple: '/favicon_io/apple-touch-icon.png',
 
-export default function RootLayout({children}: PropsWithChildren) {
+  },
+};
+
+export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <>
-      <html lang="en" suppressHydrationWarning>
-      <head/>
+    <html lang="en" suppressHydrationWarning>
+      <head />
       <body
         className={cn(
-          "flex min-h-screen flex-col bg-background font-sans antialiased",
-          fontSans.variable
+          'flex min-h-screen flex-col bg-background font-sans antialiased',
+          fontSans.variable,
         )}
       >
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <ProgressBarProvider>
-          {children}
-          <Toaster />
-        </ProgressBarProvider>
-        <TailwindIndicator/>
-      </ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthContextProvider>
+            <ProgressBarProvider>
+              {children}
+              <Toaster />
+            </ProgressBarProvider>
+          </AuthContextProvider>
+          <TailwindIndicator />
+        </ThemeProvider>
       </body>
-      </html>
-    </>
-  )
+    </html>
+  );
 }
