@@ -21,7 +21,7 @@ import { useGPTMessageDialog } from '@/zustand/useModal';
 
 import ReviewHeader from './_components/review-header';
 
-const PER_PAGE = +(ENV.REVIEW_PER_PAGE ?? 1);
+const PER_PAGE = +(ENV.REVIEW_PER_PAGE ?? 10);
 
 interface Props {
   params: {
