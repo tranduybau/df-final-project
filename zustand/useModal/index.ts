@@ -1,14 +1,12 @@
 import { create } from 'zustand';
 
 interface GPTMessageDialog {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  selectedFile: string;
+  actionSelectedFileChange: (fileName: string) => void;
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export const useGPTMessageDialog = create<GPTMessageDialog>()(
-  (set) => ({
-    isOpen: false,
-    setIsOpen: (isOpen) => set({ isOpen }),
-  }),
-);
+export const useGPTMessageDialog = create<GPTMessageDialog>((set): GPTMessageDialog => ({
+  selectedFile: '',
+  actionSelectedFileChange: (fileName) => set(({ selectedFile: fileName })),
+}));

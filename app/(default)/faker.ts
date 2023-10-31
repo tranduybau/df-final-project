@@ -34,7 +34,7 @@ const faker = {
       name: 'Dev Quèn',
       real_name: 'Khang',
       github: 'https://github.com/nguyenhoaikhang37',
-      portfolio: 'https://nguyenhoaikhang-cv.vercel.app/',
+      portfolio: '',
       avatar: '/images/khang.png',
     },
     {

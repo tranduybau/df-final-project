@@ -1,10 +1,11 @@
+import ENV from '@/constants/env'
 import { getToken } from '@/context/auth'
 import { emitter } from '@/lib/emitter'
 import { isSSR } from '@dwarvesf/react-utils'
 import Axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 // eslint-disable-next-line prefer-destructuring
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+const BASE_URL = ENV.BASE_URL
 
 export const AXIOS_INSTANCE = Axios.create({ baseURL: BASE_URL })
 

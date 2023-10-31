@@ -2,6 +2,7 @@
 
 import React from 'react';
 import * as DOMPurify from 'dompurify';
+import { SendHorizonal, Sparkle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,15 +16,14 @@ import {
 
 import { cn } from '@/lib/utils';
 import { OpenAIMessage } from '@/services';
-import { useGPTMessageDialog } from '@/zustand/useModal';
 
 import AppTextArea from '../common/app-textarea';
-import Icon from '../common/icon';
+import MessageList from '../common/message-list';
 import MessageSkeleton from '../common/message-skeleton';
 
-import MessageList from './_components/message-list';
-
 export interface ChatWithGPTDialogProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: any) => void;
   content: OpenAIMessage[];
   isLoading: boolean;
   onSubmitMessage: (message: string) => void;
@@ -31,16 +31,16 @@ export interface ChatWithGPTDialogProps {
 
 export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
   const {
-    content, isLoading, onSubmitMessage,
+    isOpen, setIsOpen, isLoading, content, onSubmitMessage,
   } = props;
-
-  console.log('dynamic nè');
 
   const [message, setMessage] = React.useState('');
 
   const contentWithoutPrompt = React.useMemo(
     () => {
-      if (content.length > 1) {
+      if (!content) return [];
+
+      if (content?.length > 1) {
         return content.slice(1);
       }
       return content;
@@ -64,7 +64,7 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
   };
 
   return (
-    <Dialog open={!!content.length}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         className="max-w-full sm:max-w-7xl"
         onInteractOutside={(e: any) => {
@@ -113,15 +113,13 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full"
               >
                 <div className="relative">
-                  <Icon
-                    name="send-horizontal"
+                  <SendHorizonal
                     className={cn(
                       'h-6 w-6',
                       message ? 'text-blue-500' : 'text-gray-500',
                     )}
                   />
-                  <Icon
-                    name="sparkle"
+                  <Sparkle
                     className={cn(
                       'absolute -right-1 -top-1 h-3 w-3',
                       message ? 'text-blue-500' : 'text-gray-500',

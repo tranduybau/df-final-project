@@ -1,4 +1,5 @@
 import { toast } from '@/components/ui/use-toast';
+import ENV from '@/constants/env';
 import gptModel from '@/constants/gptModel';
 
 import { getToken } from '@/context/auth';
@@ -46,7 +47,7 @@ export async function getContentFileRepository(params: ContentFileParams) {
 
     const ENDPOINT = `${pathName}/${branch}/${fileName}`;
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_GITHUB_CONTENT_API}/${ENDPOINT}`); // eslint-disable-line;
+    const response = await fetch(`${ENV.GITHUB_CONTENT_API}/${ENDPOINT}`); // eslint-disable-line;
     const data = await response.text();
 
     if (data) {
