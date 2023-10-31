@@ -2,15 +2,15 @@
 
 import React from 'react';
 import debounce from 'lodash.debounce';
-import { RefreshCw } from 'lucide-react';
+import {
+  Inbox, MoveLeft, MoveRight, RefreshCw,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import Icon from '@/components/common/icon';
 import ChatWithGPTDialog from '@/components/dialog/chat-with-gpt-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-import ReviewCard from '@/app/(default)/reviewing/[...slug]/_components/review-card';
 import ENV from '@/constants/env';
 import ROUTES from '@/constants/ROUTES';
 import { getContentFileRepository, getReviewFromChatGPT } from '@/services/chatGPT';
@@ -19,6 +19,7 @@ import getReviewPrompt from '@/utils/prompt';
 import { GitHubFileType, useGetGithubRepositoryOverview, useGetRepositoryFiles } from '@/zustand/useGetGithubRepository';
 import { useGPTMessageDialog } from '@/zustand/useModal';
 
+import ReviewCard from './_components/review-card';
 import ReviewHeader from './_components/review-header';
 
 const PER_PAGE = +(ENV.REVIEW_PER_PAGE ?? 10);
@@ -209,7 +210,7 @@ export default function DynamicPage(props: Props) {
                     />
                   )) : (
                     <section className="container flex flex-col items-center gap-10 py-10">
-                      <Icon name="inbox" className="mx-auto" size={50} />
+                      <Inbox className="mx-auto" size={50} />
                       <h1>
                         No files found
                       </h1>
@@ -223,7 +224,7 @@ export default function DynamicPage(props: Props) {
                 <div className="mt-4 flex items-center justify-between">
                   {page > 1 ? (
                     <Button variant="ghost" onClick={handlePrevPage}>
-                      <Icon name="move-left" className="mr-2 h-4 w-4 text-gray-500" />
+                      <MoveLeft className="mr-2 h-4 w-4 text-gray-500" />
                       Previous page
                     </Button>
                   ) : <div />}
@@ -231,8 +232,7 @@ export default function DynamicPage(props: Props) {
                   {page < Math.ceil(files.length / 10) && (
                   <Button variant="ghost" onClick={handleNextPage}>
                     Next page
-                    <Icon
-                      name="move-right"
+                    <MoveRight
                       className="ml-2 h-4 w-4 text-gray-500"
                     />
                   </Button>

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { LogOut } from 'lucide-react';
 import Link from 'next/link';
 
 import { MainNav } from '@/components/main-nav';
@@ -19,8 +20,6 @@ import {
 import { siteConfig } from '@/config/site';
 import ROUTES from '@/constants/ROUTES';
 import { useAuthContext } from '@/context/auth';
-
-import Icon from './common/icon';
 
 // eslint-disable-next-line import/prefer-default-export
 export function SiteHeader() {
@@ -65,7 +64,7 @@ export function SiteHeader() {
 
                   <DropdownMenuItem onClick={logout}>
                     Log Out
-                    <Icon name="log-out" className="ml-2 h-4 w-4 text-gray-500" />
+                    <LogOut className="ml-2 text-gray-500" size={20} />
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

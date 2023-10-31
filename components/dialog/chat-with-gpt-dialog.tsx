@@ -2,6 +2,7 @@
 
 import React from 'react';
 import * as DOMPurify from 'dompurify';
+import { SendHorizonal, Sparkle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,7 +18,6 @@ import { cn } from '@/lib/utils';
 import { OpenAIMessage } from '@/services';
 
 import AppTextArea from '../common/app-textarea';
-import Icon from '../common/icon';
 import MessageList from '../common/message-list';
 import MessageSkeleton from '../common/message-skeleton';
 
@@ -113,15 +113,13 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full"
               >
                 <div className="relative">
-                  <Icon
-                    name="send-horizontal"
+                  <SendHorizonal
                     className={cn(
                       'h-6 w-6',
                       message ? 'text-blue-500' : 'text-gray-500',
                     )}
                   />
-                  <Icon
-                    name="sparkle"
+                  <Sparkle
                     className={cn(
                       'absolute -right-1 -top-1 h-3 w-3',
                       message ? 'text-blue-500' : 'text-gray-500',
