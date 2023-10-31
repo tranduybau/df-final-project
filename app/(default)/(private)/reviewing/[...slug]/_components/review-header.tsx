@@ -1,8 +1,8 @@
 import React from 'react';
 
-import AppInput from '@/components/common/app-input';
 import Icon from '@/components/common/icon';
 import { Icons } from '@/components/icons';
+import { Input } from '@/components/ui/input';
 
 import { GitHubOverview } from '@/zustand/useGetGithubRepository';
 
@@ -36,8 +36,16 @@ export default function ReviewHeader({ repositoryOverView, onSearchFiles }: Revi
         <div className="text-lg font-extrabold">{name}</div>
       </div>
 
-      <div>
-        <AppInput leftIcon="search" placeholder="Search component..." onChange={handleChangeInput} />
+      <div className="relative">
+        <Icon
+          name="search"
+          className="absolute inset-y-0 left-3 my-auto h-6 w-6 text-gray-500"
+        />
+        <Input
+          className="pl-11"
+          placeholder="Search component..."
+          onChange={handleChangeInput}
+        />
       </div>
     </div>
   );
