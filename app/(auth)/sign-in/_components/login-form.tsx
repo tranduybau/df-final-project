@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import * as z from 'zod';
 
+import AppInput from '@/components/common/app-input';
+import PasswordInput from '@/components/common/password-input';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,13 +20,8 @@ import {
 } from '@/components/ui/card';
 import {
   Form,
-  FormControl,
   FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -121,13 +118,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
                 control={form.control}
                 name="username"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Username" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                  <AppInput label="Username" placeholder="Username" {...field} />
                 )}
               />
             </div>
@@ -136,17 +127,11 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                  <PasswordInput
+                    label="Password"
+                    placeholder="Password"
+                    {...field}
+                  />
                 )}
               />
             </div>
@@ -164,7 +149,6 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
             <Link href={ROUTES.HOME} className="w-full">
               <Button type="button" className="w-full" variant="secondary">
                 <Icons.leftArrow className="mr-2" size={20} />
-
                 Go Back
               </Button>
             </Link>

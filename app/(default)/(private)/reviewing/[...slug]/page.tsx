@@ -2,14 +2,16 @@
 
 import React from 'react';
 import debounce from 'lodash.debounce';
-import { RefreshCw } from 'lucide-react';
+import {
+  Inbox, MoveLeft, MoveRight, RefreshCw,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import Icon from '@/components/common/icon';
 import ChatWithGPTDialog from '@/components/dialog/chat-with-gpt-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
+import ENV from '@/constants/env';
 import ROUTES from '@/constants/ROUTES';
 import { getContentFileRepository, getReviewFromChatGPT } from '@/services/chatGPT';
 import { ReviewMessageMap, ReviewMessageRole } from '@/types/chatGPT';
@@ -20,7 +22,7 @@ import { useGPTMessageDialog } from '@/zustand/useModal';
 import ReviewCard from './_components/review-card';
 import ReviewHeader from './_components/review-header';
 
-const PER_PAGE = 10;
+const PER_PAGE = +(ENV.REVIEW_PER_PAGE ?? 10);
 
 interface Props {
   params: {
@@ -30,7 +32,7 @@ interface Props {
 
 export default function DynamicPage(props: Props) {
   const { params } = props;
-  const { isOpen } = useGPTMessageDialog();
+  const { selectedFile, actionSelectedFileChange } = useGPTMessageDialog();
 
   const router = useRouter();
 
@@ -45,13 +47,16 @@ export default function DynamicPage(props: Props) {
 
   const filteredFiles = React.useMemo(
     () => {
+      let newFiles = files;
+
       if (searchFilesValue) {
-        return files.filter((file: GitHubFileType) => {
+        newFiles = files.filter((file: GitHubFileType) => {
           const fileName = file.path.toLowerCase();
           return fileName.includes(searchFilesValue.toLowerCase());
         });
       }
-      return files.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+
+      return newFiles.slice((page - 1) * PER_PAGE, page * PER_PAGE);
     },
     [files, page, searchFilesValue],
   );
@@ -108,6 +113,7 @@ export default function DynamicPage(props: Props) {
       ],
     }));
 
+    setIsLoadingReview(true);
     const newMessage = await getReviewFromChatGPT(newMessagesRequest);
     if (!newMessage) return;
 
@@ -120,6 +126,8 @@ export default function DynamicPage(props: Props) {
           content: newMessage,
         }],
     }));
+
+    setIsLoadingReview(false);
   };
 
   const handleFetchRepository = async () => {
@@ -193,43 +201,56 @@ export default function DynamicPage(props: Props) {
             <div className="mt-4">
               <Card>
                 <CardContent className="flex flex-col gap-y-2 p-4">
-                  {filteredFiles.map((file: GitHubFileType) => (
+                  {filteredFiles.length > 0 ? filteredFiles.map((file: GitHubFileType) => (
                     <ReviewCard
                       key={file.sha}
                       fileName={file.path}
                       content={reviewMessages?.[file.path] ?? []}
                       isLoadingReview={isLoadingReview}
-                      onUserSendMessage={handleUserSendMessage}
                     />
-                  ))}
+                  )) : (
+                    <section className="container flex flex-col items-center gap-10 py-10">
+                      <Inbox className="mx-auto" size={50} />
+                      <h1>
+                        No files found
+                      </h1>
+                    </section>
+                  )}
+
                 </CardContent>
               </Card>
 
-              <div className="mt-4 flex items-center justify-between">
-                {page > 1 ? (
-                  <Button variant="ghost" onClick={handlePrevPage}>
-                    <Icon name="move-left" className="mr-2 h-4 w-4 text-gray-500" />
-                    Previous page
-                  </Button>
-                ) : <div />}
+              {filteredFiles.length > 0 && (
+                <div className="mt-4 flex items-center justify-between">
+                  {page > 1 ? (
+                    <Button variant="ghost" onClick={handlePrevPage}>
+                      <MoveLeft className="mr-2 h-4 w-4 text-gray-500" />
+                      Previous page
+                    </Button>
+                  ) : <div />}
 
-                {page < Math.ceil(files.length / 10) && (
+                  {page < Math.ceil(files.length / 10) && (
                   <Button variant="ghost" onClick={handleNextPage}>
                     Next page
-                    <Icon
-                      name="move-right"
+                    <MoveRight
                       className="ml-2 h-4 w-4 text-gray-500"
                     />
                   </Button>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
       </section>
 
-      {isOpen
-      && <ChatWithGPTDialog content={[]} isLoading onSubmitMessage={() => {}} />}
+      <ChatWithGPTDialog
+        isOpen={!!selectedFile}
+        setIsOpen={actionSelectedFileChange}
+        content={reviewMessages?.[selectedFile]}
+        isLoading={isLoadingReview}
+        onSubmitMessage={(message) => handleUserSendMessage(message, selectedFile)}
+      />
     </>
   );
 }

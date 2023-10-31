@@ -2,6 +2,7 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 import Icon from '@/components/common/icon';
 import MessageSkeleton from '@/components/common/message-skeleton';
@@ -14,6 +15,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import chatGptImage from '@/assets/images/chatgpt.webp';
 import { cn } from '@/lib/utils';
 import { OpenAIMessage } from '@/services';
 import { useGPTMessageDialog } from '@/zustand/useModal';
@@ -22,7 +24,7 @@ const Message = dynamic(() => import('@/components/common/message'), {
   loading: () => <MessageSkeleton />,
 });
 
-const gradeColor = (gradeValue: string | -1) => {
+const gradeColor = (gradeValue: string) => {
   const colorMap = {
     A: 'bg-green-100 dark:bg-green-500 text-green-400 dark:text-white border-green-400',
     B: 'bg-yellow-100 dark:bg-yellow-500 text-yellow-400 dark:text-white border-yellow-400',
@@ -46,55 +48,49 @@ const gradeColor = (gradeValue: string | -1) => {
 };
 
 function extractCodeQuality(input: string) {
-  const codeQualityMatch = input.match(/=== (A|B|C|D) ===|\((A|B|C|D)\)|(A|B|C|D)(?:\.|$)/);
+  const codeQualityMatch = input.match(/=== (A|B|C|D) ===|\((A|B|C|D)\)|(A|B|C|D)(?:\.|$|\*)/);
 
-  if (codeQualityMatch) {
-    const codeQuality = codeQualityMatch[1] ?? codeQualityMatch[2] ?? codeQualityMatch[3];
-    return codeQuality;
-  }
+  if (!codeQualityMatch) return null;
 
-  return -1;
+  const codeQuality = codeQualityMatch[1] ?? codeQualityMatch[2] ?? codeQualityMatch[3];
+  return codeQuality;
 }
 
 export interface ReviewCardProps {
   fileName: string;
   content: OpenAIMessage[];
   isLoadingReview: boolean;
-  onUserSendMessage: (message:string, fileName: string) => void;
 }
 
 export default function ReviewCard({
   fileName,
   content,
   isLoadingReview,
-  onUserSendMessage,
 }: ReviewCardProps) {
-  const { setIsOpen } = useGPTMessageDialog();
+  const { selectedFile, actionSelectedFileChange } = useGPTMessageDialog();
 
   const [open, setOpen] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
 
-  const showSkeleton = isLoading || !content?.[1]?.content;
-  const showReview = !isLoading && content?.[1]?.content;
-  const hasNoReview = !isLoading && !isLoadingReview && !content?.[1]?.content;
+  const showSkeleton = !content?.[1]?.content;
+  const showReview = content?.[1]?.content;
+  const hasNoReview = !isLoadingReview && !content?.[1]?.content;
 
   const handleToggle = async () => {
     const newOpen = !open;
     setOpen(newOpen);
   };
 
-  const handleUserSendMessage = async (message: string) => {
-    // Prevent fetch review messages if loading
-    if (isLoading) return;
-
-    setIsLoading(true);
-    await onUserSendMessage(message, fileName);
-    setIsLoading(false);
+  const handlePopupChatGPT = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    if (!selectedFile) {
+      actionSelectedFileChange(fileName);
+    } else {
+      actionSelectedFileChange('');
+    }
   };
 
   return (
     <div className="flex flex-col">
-
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
        jsx-a11y/no-static-element-interactions */}
       <div
@@ -126,13 +122,13 @@ export default function ReviewCard({
                 className={cn(
                   'flex h-6 w-6 items-center justify-center rounded-full border text-sm font-extrabold',
                   gradeColor(
-                    extractCodeQuality(content?.[1]?.content || ''),
+                    extractCodeQuality(content?.[1]?.content) ?? '',
                   ),
                 )}
               >
-                {typeof extractCodeQuality(content?.[1]?.content) === 'string' ? (
+                {extractCodeQuality(content?.[1]?.content) ? (
                   <span>
-                    {extractCodeQuality(content?.[1]?.content || '')}
+                    {extractCodeQuality(content?.[1]?.content)}
                   </span>
                 )
                   : (
@@ -159,15 +155,18 @@ export default function ReviewCard({
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-              e.stopPropagation();
-              setIsOpen(true);
-            }}
+          <Button
+            className="cursor-pointer"
+            variant="outline"
+            size="sm"
+            onClick={handlePopupChatGPT}
           >
+            <div className="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-100">
+              <Image src={chatGptImage} alt="chat-gpt-image" />
+            </div>
             Chat with GPT
-          </button>
+          </Button>
+
         </div>
       </div>
 
