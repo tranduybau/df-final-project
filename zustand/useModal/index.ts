@@ -8,5 +8,5 @@ interface GPTMessageDialog {
 // eslint-disable-next-line import/prefer-default-export
 export const useGPTMessageDialog = create<GPTMessageDialog>((set): GPTMessageDialog => ({
   selectedFile: '',
-  actionSelectedFileChange: (fileName) => set(() => ({ selectedFile: fileName })),
+  actionSelectedFileChange: (fileName) => set(({ selectedFile: fileName })),
 }));

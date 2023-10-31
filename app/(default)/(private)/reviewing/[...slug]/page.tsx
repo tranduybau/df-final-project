@@ -200,15 +200,14 @@ export default function DynamicPage(props: Props) {
             <div className="mt-4">
               <Card>
                 <CardContent className="flex flex-col gap-y-2 p-4">
-                  {filteredFiles.length > 0 && filteredFiles.map((file: GitHubFileType) => (
+                  {filteredFiles.length > 0 ? filteredFiles.map((file: GitHubFileType) => (
                     <ReviewCard
                       key={file.sha}
                       fileName={file.path}
                       content={reviewMessages?.[file.path] ?? []}
                       isLoadingReview={isLoadingReview}
                     />
-                  ))}
-                  {filteredFiles.length === 0 && (
+                  )) : (
                     <section className="container flex flex-col items-center gap-10 py-10">
                       <Icon name="inbox" className="mx-auto" size={50} />
                       <h1>
@@ -216,6 +215,7 @@ export default function DynamicPage(props: Props) {
                       </h1>
                     </section>
                   )}
+
                 </CardContent>
               </Card>
 

@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -25,7 +24,7 @@ const Message = dynamic(() => import('@/components/common/message'), {
   loading: () => <MessageSkeleton />,
 });
 
-const gradeColor = (gradeValue: string | -1) => {
+const gradeColor = (gradeValue: string) => {
   const colorMap = {
     A: 'bg-green-100 dark:bg-green-500 text-green-400 dark:text-white border-green-400',
     B: 'bg-yellow-100 dark:bg-yellow-500 text-yellow-400 dark:text-white border-yellow-400',
@@ -49,14 +48,12 @@ const gradeColor = (gradeValue: string | -1) => {
 };
 
 function extractCodeQuality(input: string) {
-  const codeQualityMatch = input.match(/=== (A|B|C|D) ===|\((A|B|C|D)\)|(A|B|C|D)(?:\.|$)/);
+  const codeQualityMatch = input.match(/=== (A|B|C|D) ===|\((A|B|C|D)\)|(A|B|C|D)(?:\.|$|\*)/);
 
-  if (codeQualityMatch) {
-    const codeQuality = codeQualityMatch[1] ?? codeQualityMatch[2] ?? codeQualityMatch[3];
-    return codeQuality;
-  }
+  if (!codeQualityMatch) return null;
 
-  return -1;
+  const codeQuality = codeQualityMatch[1] ?? codeQualityMatch[2] ?? codeQualityMatch[3];
+  return codeQuality;
 }
 
 export interface ReviewCardProps {
@@ -125,13 +122,13 @@ export default function ReviewCard({
                 className={cn(
                   'flex h-6 w-6 items-center justify-center rounded-full border text-sm font-extrabold',
                   gradeColor(
-                    extractCodeQuality(content?.[1]?.content || ''),
+                    extractCodeQuality(content?.[1]?.content) ?? '',
                   ),
                 )}
               >
-                {typeof extractCodeQuality(content?.[1]?.content) === 'string' ? (
+                {extractCodeQuality(content?.[1]?.content) ? (
                   <span>
-                    {extractCodeQuality(content?.[1]?.content || '')}
+                    {extractCodeQuality(content?.[1]?.content)}
                   </span>
                 )
                   : (
