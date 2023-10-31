@@ -111,6 +111,7 @@ export default function ChatWithGPTDialog(props: ChatWithGPTDialogProps) {
                 variant="ghost"
                 size="icon"
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full"
+                disabled={isLoading}
               >
                 <div className="relative">
                   <SendHorizonal
